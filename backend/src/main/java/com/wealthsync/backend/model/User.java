@@ -1,14 +1,14 @@
 package com.wealthsync.backend.model;
 
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
-@Table("users")  // Map to the 'users' table in your database
+@Table("users") // Map this entity to the 'users' table in the database
 public class User {
 
     @Id
     private Long id;
-
     private String name;
     private String email;
     private String password;

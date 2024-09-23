@@ -1,7 +1,7 @@
 package com.wealthsync.backend.controller;
 
 import com.wealthsync.backend.model.User;
-import com.wealthsync.backend.service.UserRepository;
+import com.wealthsync.backend.common.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

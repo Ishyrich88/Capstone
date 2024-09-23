@@ -1,4 +1,4 @@
-package com.wealthsync.backend.service;
+package com.wealthsync.backend.common;
 
 import com.wealthsync.backend.model.User;
 import org.springframework.data.repository.CrudRepository;
@@ -10,3 +10,4 @@ public interface UserRepository extends CrudRepository<User, Long> {
     // Find a user by their email address
     User findByEmail(String email);
 }
+
