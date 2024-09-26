@@ -7,27 +7,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        'dark-start': '#1e293b', // Dark start gradient
-        'dark-end': '#111827',   // Dark end gradient
-        'accent': '#38bdf8',     // Accent color for hover effects
-        'primary': '#0ea5e9',    // Primary blue
-        'secondary': '#7c3aed',  // Secondary purple
-        'neutral': '#64748b',    // Neutral grayish color
-        'light': '#f1f5f9',      // Light background color
-      },
-      backgroundImage: {
-        'gradient-to-b': 'linear-gradient(to bottom, var(--tw-gradient-stops))',
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-      },
-      fontFamily: {
-        'sans': ['Inter', 'sans-serif'],  // Custom sans-serif font (like Inter)
+        'dark-start': '#1e293b',  // Keep original dark start gradient
+        'dark-end': '#111827',    // Keep original dark end gradient
+        'accent': '#38bdf8',      // Keep original accent color
+        'body-bg': '#f5f5f5',     // Background color for the body from reference site
+        'primary-text': '#333333',  // Text color for the body to match reference website
       },
     },
   },
-  plugins: [
-    require('@tailwindcss/forms'),      // For better form styling
-    require('@tailwindcss/typography'), // For better text formatting
-  ],
-}
+  plugins: [],
+};
 
 

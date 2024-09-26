@@ -6,19 +6,19 @@ import Register from './components/Register';
 import Portfolio from './components/Portfolio';
 import AssetManagement from './components/AssetManagement';
 import NavBar from './components/NavBar';
-import LandingPage from './components/LandingPage';  // Import the Landing Page
+import LandingPage from './components/LandingPage'; // Import landing page
 
 function App() {
     return (
         <Router>
             <NavBar />
             <Routes>
-                <Route path="/" element={<LandingPage />} />  {/* Set LandingPage as the home route */}
+                <Route path="/" element={<LandingPage />} />  {/* Set LandingPage as default */}
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/portfolio/:id" element={<Portfolio />} />
                 <Route path="/assets" element={<AssetManagement />} />
-                <Route path="/dashboard" element={<Dashboard />} />  {/* Keep other pages */}
             </Routes>
         </Router>
     );
