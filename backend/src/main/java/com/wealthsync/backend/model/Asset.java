@@ -1,25 +1,45 @@
 package com.wealthsync.backend.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
-import java.math.BigDecimal;
-import java.time.LocalDate; // Change to LocalDate for date fields
 
-@Table("assets")
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+// Annotate this class as a table representation
+@Table("assets")  // Ensure this matches your table name in the database
 public class Asset {
 
     @Id
+    @Column("id")  // Column mapping for better clarity
     private Long id;
-    private Long userId; // Reference to the User who owns this asset
-    private AssetType assetType; // Enum for type of asset (CRYPTO, STOCK, MANUAL)
-    private String assetName; // Name of the asset (e.g., Bitcoin, Rolex)
-    private String symbol; // Symbol for real-time tracked assets (e.g., BTC, AAPL)
-    private BigDecimal value; // Current value of the asset (using BigDecimal for precision)
-    private Boolean isRealTimeTracked; // Indicates if the asset is tracked in real-time
-    private LocalDate purchaseDate; // Change to LocalDate for the purchase date
-    private LocalDate lastUpdated; // Change to LocalDate for the last updated date
 
-    // Constructors, Getters, and Setters
+    @Column("user_id")
+    private Long userId;  // Reference to the User who owns this asset
+
+    @Column("asset_type")
+    private AssetType assetType;  // Enum for type of asset (CRYPTO, STOCK, MANUAL)
+
+    @Column("asset_name")
+    private String assetName;  // Name of the asset (e.g., Bitcoin, Rolex)
+
+    @Column("symbol")
+    private String symbol;  // Symbol for real-time tracked assets (e.g., BTC, AAPL)
+
+    @Column("value")
+    private BigDecimal value;  // Current value of the asset (using BigDecimal for precision)
+
+    @Column("is_real_time_tracked")
+    private Boolean isRealTimeTracked;  // Indicates if the asset is tracked in real-time
+
+    @Column("purchase_date")
+    private LocalDate purchaseDate;  // Date of purchase
+
+    @Column("last_updated")
+    private LocalDate lastUpdated;  // Last updated date
+
+    // Default constructor
     public Asset() {}
 
     // Constructor for real-time tracked assets (CRYPTO, STOCK)
@@ -29,7 +49,7 @@ public class Asset {
         this.assetName = assetName;
         this.symbol = symbol;
         this.isRealTimeTracked = isRealTimeTracked;
-        this.value = BigDecimal.ZERO; // Default initial value (to be updated in real-time)
+        this.value = BigDecimal.ZERO;  // Default initial value (to be updated in real-time)
     }
 
     // Constructor for manual assets
@@ -40,7 +60,7 @@ public class Asset {
         this.value = value;
         this.purchaseDate = purchaseDate;
         this.lastUpdated = lastUpdated;
-        this.isRealTimeTracked = false; // Manual assets are not tracked in real-time
+        this.isRealTimeTracked = false;  // Manual assets are not tracked in real-time
     }
 
     // Getters and Setters
@@ -116,5 +136,8 @@ public class Asset {
         this.lastUpdated = lastUpdated;
     }
 }
+
+
+
 
 

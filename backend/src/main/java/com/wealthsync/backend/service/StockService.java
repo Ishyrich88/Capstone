@@ -16,34 +16,43 @@ public class StockService {
 
     private static final Logger logger = LoggerFactory.getLogger(StockService.class);
 
-    @Value("${alpha.vantage.api.key}") // Inject API key from properties
+    @Value("${alpha.vantage.api.key}")
     private String alphaVantageApiKey;
 
     private final String ALPHA_VANTAGE_URL = "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=";
 
-    @Cacheable(value = "stockPrices", key = "#symbol") // Simplified cache key
+    @Cacheable(value = "stockPrices", key = "#symbol")
     public BigDecimal getStockPrice(String symbol) {
         try {
+            logger.debug("Fetching stock price for symbol: {}", symbol);
+
             RestTemplate restTemplate = new RestTemplate();
             String url = ALPHA_VANTAGE_URL + symbol + "&apikey=" + alphaVantageApiKey;
             String response = restTemplate.getForObject(url, String.class);
 
-            // Parse JSON response
-            JSONObject json = new JSONObject(response);
-            if (json.has("Global Quote")) {
-                return json.getJSONObject("Global Quote").getBigDecimal("05. price");
-            }
+            logger.debug("Alpha Vantage response for symbol {}: {}", symbol, response);
 
+            JSONObject json = new JSONObject(response);
+            if (json.has("Global Quote") && json.getJSONObject("Global Quote").has("05. price")) {
+                BigDecimal price = json.getJSONObject("Global Quote").getBigDecimal("05. price");
+                logger.info("Fetched stock price for {}: {}", symbol, price);
+                return price;
+            } else {
+                logger.warn("Invalid response structure or missing price data for symbol: {}", symbol);
+                logger.warn("Response from Alpha Vantage: {}", json.toString(2)); // Pretty-print JSON for clarity
+            }
         } catch (HttpClientErrorException e) {
-            logger.error("Error fetching price from Alpha Vantage API for {}: {}", symbol, e.getMessage());
+            logger.error("Error fetching stock price for symbol {}: {}", symbol, e.getMessage());
         } catch (Exception e) {
-            logger.error("Unexpected error while fetching stock price for {}: {}", symbol, e.getMessage());
+            logger.error("Unexpected error while fetching stock price for symbol {}: {}", symbol, e.getMessage());
         }
 
-        // Return default value if there was an issue
         return BigDecimal.ZERO;
     }
 }
+
+
+
 
 
 

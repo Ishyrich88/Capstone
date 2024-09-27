@@ -1,18 +1,72 @@
 package com.wealthsync.backend.common;
 
 import com.wealthsync.backend.model.Asset;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface AssetRepository extends CrudRepository<Asset, Long> {
+public class AssetRepository {
 
-    // Find all assets belonging to a specific user
-    List<Asset> findByUserId(Long userId);
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
-    // Find all assets that are tracked in real-time
-    List<Asset> findByIsRealTimeTracked(Boolean isRealTimeTracked);
+    // Find all assets by user ID
+    public List<Asset> findByUserId(Long userId) {
+        String sql = "SELECT * FROM assets WHERE user_id = ?";
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Asset.class), userId);
+    }
+
+    // Find an asset by its ID
+    public Optional<Asset> findById(Long id) {
+        String sql = "SELECT * FROM assets WHERE id = ?";
+        List<Asset> assets = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Asset.class), id);
+        return assets.isEmpty() ? Optional.empty() : Optional.of(assets.get(0));
+    }
+
+    // Find all assets in the system
+    public List<Asset> findAllAssets() {
+        String sql = "SELECT * FROM assets";
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Asset.class));
+    }
+
+    // Find assets tracked in real-time
+    public List<Asset> findByIsRealTimeTracked(Boolean isRealTimeTracked) {
+        String sql = "SELECT * FROM assets WHERE is_real_time_tracked = ?";
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Asset.class), isRealTimeTracked);
+    }
+
+    // Save a new asset
+    public Asset save(Asset asset) {
+        String sql = "INSERT INTO assets (user_id, asset_type, asset_name, symbol, value, is_real_time_tracked, purchase_date, last_updated) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, asset.getUserId(), asset.getAssetType().toString(), asset.getAssetName(),
+                asset.getSymbol(), asset.getValue(), asset.getIsRealTimeTracked(),
+                asset.getPurchaseDate(), asset.getLastUpdated());
+        return asset;
+    }
+
+    // Update an existing asset
+    public Asset update(Asset asset) {
+        String sql = "UPDATE assets SET user_id = ?, asset_type = ?, asset_name = ?, symbol = ?, value = ?, " +
+                "is_real_time_tracked = ?, purchase_date = ?, last_updated = ? WHERE id = ?";
+        jdbcTemplate.update(sql, asset.getUserId(), asset.getAssetType().toString(), asset.getAssetName(),
+                asset.getSymbol(), asset.getValue(), asset.getIsRealTimeTracked(),
+                asset.getPurchaseDate(), asset.getLastUpdated(), asset.getId());
+        return asset;
+    }
+
+    // Delete an asset by ID
+    public void deleteById(Long id) {
+        String sql = "DELETE FROM assets WHERE id = ?";
+        jdbcTemplate.update(sql, id);
+    }
 }
+
+
+
 

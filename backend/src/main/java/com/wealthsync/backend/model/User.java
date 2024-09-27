@@ -1,6 +1,5 @@
 package com.wealthsync.backend.model;
 
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -9,7 +8,8 @@ public class User {
 
     @Id
     private Long id;
-    private String name;
+    private String firstName;  // Changed from 'name' to 'firstName'
+    private String lastName;   // Added lastName
     private String email;
     private String password;
 
@@ -23,12 +23,20 @@ public class User {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getEmail() {
@@ -47,3 +55,4 @@ public class User {
         this.password = password;
     }
 }
+

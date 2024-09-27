@@ -1,90 +1,107 @@
-# WealthSync - Personal Wealth Management Application
+WealthSync - Personal Wealth Management Platform
+WealthSync is an innovative personal wealth management platform designed to help users track their net worth by consolidating various asset types such as cryptocurrencies, stocks, real estate, and more. With an integrated dashboard providing real-time updates for market-based assets and seamless manual entry for custom assets, WealthSync offers a comprehensive view of financial health and performance.
 
-WealthSync is a personal wealth management platform that helps users track their total net worth by consolidating various asset types, including cryptocurrency, stocks, watches, and real estate. The platform provides real-time updates for certain assets using APIs (CoinGecko for crypto and Alpha Vantage for stocks) and manual entry for other assets (e.g., real estate).
+🚀 Project Vision
+WealthSync aims to simplify wealth management by providing users with a unified view of their financial situation. By consolidating various asset classes and liabilities, along with real-time price tracking, the platform empowers users to make informed financial decisions, set and achieve investment goals, and track net worth—all from a single dashboard.
 
-## Project Goal
-The goal of the project is to provide a consolidated dashboard for users to view and manage their total net worth, offering a comprehensive and user-friendly interface for personal wealth management.
+🏗️ Key Features
+🔐 Secure User Authentication & Authorization
+User registration and login, with robust security protocols.
+Password encryption using BCrypt to ensure user data remains secure.
+JWT-based authentication for secure API access (can be modified for session-based authentication).
 
-## Features
-- **User Registration & Authentication**: Secure user registration and login.
-- **Password Encryption**: Secure passwords using BCrypt hashing.
-- **JWT Authentication**: User login with token-based authentication.
-- **Asset Management**: Add, update, and delete different types of assets.
-- **Real-Time Price Updates**: Track live cryptocurrency and stock prices using APIs.
-- **Net Worth Dashboard**: Visual display of total asset value.
-- **React Front-End**: User-friendly interface for managing assets and viewing net worth.
-- **RESTful API**: Complete backend built with Spring Boot providing full CRUD functionality.
-- **MySQL Database**: Persistent data storage with relational database.
+💼 Comprehensive Asset Management
+Asset Tracking: Add, update, and delete assets across various categories such as cryptocurrency, stocks, real estate, and collectibles.
+Categorization: Assets are grouped and displayed by type for better organization and tracking.
+Real-Time Data Integration: Live price tracking for cryptocurrencies and stocks using external APIs.
 
-## Tech Stack
-### Back-End
-- **Java Spring Boot 3.3.3**: Framework for building the backend services.
-- **Spring Data JDBC**: Simplifies database access.
-- **Spring Security**: Provides authentication and authorization.
-- **JWT**: Token-based authentication.
-- **MySQL**: Relational database for persistent data storage.
+💳 Debt Management
+Track liabilities such as loans, mortgages, and credit card debt.
+Calculate net worth in real-time by subtracting total liabilities from assets.
 
-### Front-End
-- **React**: JavaScript library for building user interfaces.
-- **React Hooks**: Manage state and side effects in functional components.
-- **CSS (Bootstrap/Tailwind)**: Styling the application.
+📊 Net Worth Dashboard
+Consolidated view of total net worth with visual breakdowns by asset and liability categories.
+Dynamic charts and graphs for easy visualization of financial health.
 
-### Database
-- **MySQL**: Relational database management system.
+🎯 Investment Goal Tracker
+Set and track custom investment goals.
+Visual progress indicators to help users monitor their path towards financial milestones.
 
-### APIs
-- **CoinGecko**: Fetches live cryptocurrency prices.
-- **Alpha Vantage**: Fetches live stock prices.
+🌐 Real-Time Market Data Integration
+Cryptocurrency Prices: Integrated with CoinGecko API to fetch live prices of digital assets.
+Stock Market Prices: Integrated with Alpha Vantage API to pull real-time stock data.
 
-## Installation
-### Prerequisites
-- **Java 17** or higher
-- **Node.js** and **npm**
-- **MySQL** database
+🎨 Intuitive, Responsive Front-End
+Built with React for a seamless user experience.
+Styled with Tailwind CSS for a modern and responsive UI, ensuring compatibility across devices.
 
-### Back-End Setup
-1. Clone the repository:
-    ```sh
-    git clone https://github.com/yourusername/wealthsync.git
-    cd wealthsync/backend
-    ```
-2. Configure the MySQL database in `application.properties`:
-    ```properties
-    spring.datasource.url=jdbc:mysql://localhost:3306/wealthsync
-    spring.datasource.username=root
-    spring.datasource.password=yourpassword
-    ```
-3. Build and run the Spring Boot application:
-    ```sh
-    ./mvnw spring-boot:run
-    ```
+🔧 Full-Stack Integration & RESTful API
+RESTful API built using Spring Boot, providing CRUD functionality for assets, debts, and user profiles.
+Persistent data storage using MySQL, with a focus on data integrity and security.
 
-### Front-End Setup
-1. Navigate to the front-end directory:
-    ```sh
-    cd ../frontend
-    ```
-2. Install the dependencies:
-    ```sh
-    npm install
-    ```
-3. Start the React application:
-    ```sh
-    npm start
-    ```
+🔧 Tech Stack
 
-## Usage
-1. Register a new user account.
-2. Log in with your credentials.
-3. Add various assets (cryptocurrency, stocks, watches, real estate, etc.).
-4. View your consolidated net worth on the dashboard.
-5. Update or delete assets as needed.
+Backend:
+Java Spring Boot 3.3.3: Backend framework for building microservices and RESTful APIs.
+Spring Data JPA: Simplifies database interaction.
+Spring Security: Manages authentication and authorization.
+MySQL: Relational database for storing user, asset, and debt information.
+Frontend:
+React: JavaScript library for building dynamic user interfaces.
+React Hooks: State and side effect management in functional components.
+Tailwind CSS: Utility-first CSS framework for responsive design.
+APIs:
+CoinGecko: Real-time cryptocurrency market data.
+Alpha Vantage: Real-time stock market data.
 
-## Contributing
-We welcome contributions! Please fork the repository and submit pull requests.
+💻 Installation & Setup
+Prerequisites
+Java 17 or higher.
+Node.js and npm for front-end development.
+MySQL database server.
+Backend Setup
+Clone the repository:
+bash
+Copy code
+git clone https://github.com/yourusername/wealthsync.git
+cd wealthsync/backend
+Configure the MySQL database in application.properties:
+properties
+Copy code
+spring.datasource.url=jdbc:mysql://localhost:3306/wealthsync
+spring.datasource.username=root
+spring.datasource.password=yourpassword
+Build and run the Spring Boot application:
+bash
+Copy code
+./mvnw spring-boot:run
+Frontend Setup
+Navigate to the front-end directory:
+bash
+Copy code
+cd ../frontend
+Install dependencies:
+bash
+Copy code
+npm install
+Start the React application:
+bash
+Copy code
+npm start
+🔄 How to Use WealthSync
+Register a new user account.
+Log in with your credentials.
+Navigate to the Dashboard to:
+View consolidated net worth.
+Add, update, or delete various assets and liabilities.
+Set and track investment goals.
+Monitor real-time asset performance with live price updates.
+🛠️ Contributing
+We welcome contributions from the community! If you'd like to contribute:
 
-## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-## Contact
-For any inquiries or issues, please contact [yourname@domain.com](mailto:yourname@domain.com).
+Fork the repository.
+Create a new branch (git checkout -b feature-branch).
+Commit your changes (git commit -m 'Add new feature').
+Push to the branch (git push origin feature-branch).
+Submit a pull request!
+For more information, see our contributing guidelines.

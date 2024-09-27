@@ -8,7 +8,9 @@ import com.wealthsync.backend.service.UserService;
 import com.wealthsync.backend.service.UserDetailsServiceImpl;
 import com.wealthsync.backend.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -24,33 +26,51 @@ public class AuthController {
     private UserDetailsServiceImpl userDetailsService;
 
     @Autowired
-    private UserService userService;  // Inject UserService for registration
+    private UserService userService;
 
     @Autowired
     private JwtUtil jwtUtil;
 
     // Login endpoint
     @PostMapping("/login")
-    public JwtResponse login(@RequestBody JwtRequest authRequest) throws Exception {
+    public ResponseEntity<?> login(@RequestBody JwtRequest authRequest) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword())
             );
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(401).body("Invalid username or password.");
         } catch (Exception e) {
-            throw new Exception("Incorrect username or password", e);
+            return ResponseEntity.status(500).body("An error occurred during login: " + e.getMessage());
         }
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getEmail());
         final String jwt = jwtUtil.generateToken(userDetails);
 
-        return new JwtResponse(jwt);
+        return ResponseEntity.ok(new JwtResponse(jwt));
     }
 
     // Register endpoint
     @PostMapping("/register")
-    public String register(@RequestBody UserRegistrationRequest request) {
+    public ResponseEntity<?> register(@RequestBody UserRegistrationRequest request) {
+        // Log the registration request
         System.out.println("Registering user: " + request.getEmail());
-        User newUser = userService.registerUser(request.getEmail(), request.getPassword());
-        return "User registered successfully!";
+
+        // Register the new user
+        try {
+            User newUser = userService.registerUser(
+                    request.getFirstName(),
+                    request.getLastName(),
+                    request.getEmail(),
+                    request.getPassword()
+            );
+
+            // Respond with the newly created user's details
+            return ResponseEntity.ok(newUser);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("An error occurred during registration: " + e.getMessage());
+        }
     }
 }
+
+
