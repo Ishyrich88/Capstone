@@ -13,7 +13,7 @@ const NavBar = () => {
                 </div>
                 {/* Desktop Menu */}
                 <div className="hidden md:flex space-x-6">
-                    <Link to="/" className="hover:text-accent">Dashboard</Link>
+                    <Link to="/dashboard" className="hover:text-accent">Dashboard</Link>
                     <Link to="/assets" className="hover:text-accent">Assets</Link>
                     <Link to="/login" className="hover:text-accent">Login</Link>
                     <Link to="/register" className="hover:text-accent">Register</Link>
@@ -29,7 +29,7 @@ const NavBar = () => {
             {/* Mobile Menu */}
             {menuOpen && (
                 <div className="md:hidden">
-                    <Link to="/" className="block px-4 py-2 hover:bg-gray-700">Dashboard</Link>
+                    <Link to="/dashboard" className="block px-4 py-2 hover:bg-gray-700">Dashboard</Link>
                     <Link to="/assets" className="block px-4 py-2 hover:bg-gray-700">Assets</Link>
                     <Link to="/login" className="block px-4 py-2 hover:bg-gray-700">Login</Link>
                     <Link to="/register" className="block px-4 py-2 hover:bg-gray-700">Register</Link>
@@ -40,3 +40,4 @@ const NavBar = () => {
 };
 
 export default NavBar;
+
