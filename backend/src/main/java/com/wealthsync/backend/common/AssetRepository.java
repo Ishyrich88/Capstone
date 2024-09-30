@@ -42,21 +42,23 @@ public class AssetRepository {
 
     // Save a new asset
     public Asset save(Asset asset) {
-        String sql = "INSERT INTO assets (user_id, asset_type, asset_name, symbol, value, is_real_time_tracked, purchase_date, last_updated) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO assets (user_id, asset_type, asset_name, symbol, value, is_real_time_tracked, last_updated) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        // Use last_updated only for real-time tracked assets
         jdbcTemplate.update(sql, asset.getUserId(), asset.getAssetType().toString(), asset.getAssetName(),
-                asset.getSymbol(), asset.getValue(), asset.getIsRealTimeTracked(),
-                asset.getPurchaseDate(), asset.getLastUpdated());
+                asset.getSymbol(), asset.getValue(), asset.getIsRealTimeTracked(), asset.getLastUpdated());
         return asset;
     }
 
     // Update an existing asset
     public Asset update(Asset asset) {
         String sql = "UPDATE assets SET user_id = ?, asset_type = ?, asset_name = ?, symbol = ?, value = ?, " +
-                "is_real_time_tracked = ?, purchase_date = ?, last_updated = ? WHERE id = ?";
+                "is_real_time_tracked = ?, last_updated = ? WHERE id = ?";
+
+        // Use last_updated only for real-time tracked assets
         jdbcTemplate.update(sql, asset.getUserId(), asset.getAssetType().toString(), asset.getAssetName(),
-                asset.getSymbol(), asset.getValue(), asset.getIsRealTimeTracked(),
-                asset.getPurchaseDate(), asset.getLastUpdated(), asset.getId());
+                asset.getSymbol(), asset.getValue(), asset.getIsRealTimeTracked(), asset.getLastUpdated(), asset.getId());
         return asset;
     }
 
@@ -66,6 +68,7 @@ public class AssetRepository {
         jdbcTemplate.update(sql, id);
     }
 }
+
 
 
 

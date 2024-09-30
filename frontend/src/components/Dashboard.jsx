@@ -14,6 +14,7 @@ const Dashboard = () => {
     const [assetValue, setAssetValue] = useState('');  
     const [debtName, setDebtName] = useState('');
     const [debtValue, setDebtValue] = useState('');  
+    const [assetSymbol, setAssetSymbol] = useState('');
     const [isRealTimeTracked, setIsRealTimeTracked] = useState(false);
 
     // Simulated userId for now
@@ -66,23 +67,35 @@ const Dashboard = () => {
 
     // Add an asset using service
     const handleAddAsset = async () => {
-        if (!assetName.trim() || !assetValue.trim() || isNaN(parseFloat(assetValue))) {
-            console.error('Invalid asset input');
-            return;
+        // Validate input based on real-time tracking
+        if (isRealTimeTracked) {
+            if (!assetSymbol.trim()) {
+                console.error('Symbol is required for real-time tracked assets');
+                return;
+            }
+        } else {
+            if (!assetName.trim() || !assetValue.trim() || isNaN(parseFloat(assetValue)) || parseFloat(assetValue) <= 0) {
+                console.error('Asset value must be a positive number');
+                return;
+            }
         }
 
+        // Construct asset object based on tracking type
         const newAsset = {
             userId: userId,
             assetName: assetName.trim(),
-            value: parseFloat(assetValue) || 0,  // Ensure value is a number
+            value: isRealTimeTracked ? 0 : parseFloat(assetValue),  // Set value to 0 for real-time tracked assets
+            symbol: isRealTimeTracked ? assetSymbol.trim() : null,  // Use symbol only for real-time tracked assets
             isRealTimeTracked,
         };
 
         try {
             const addedAsset = await addAsset(newAsset);
             setAssets([...assets, addedAsset]);
+            // Reset state after adding the asset
             setAssetName('');
             setAssetValue('');
+            setAssetSymbol('');
             setIsRealTimeTracked(false);
         } catch (error) {
             console.error('Error adding asset:', error);
@@ -101,8 +114,8 @@ const Dashboard = () => {
 
     // Add a debt using service
     const handleAddDebt = async () => {
-        if (!debtName.trim() || !debtValue.trim() || isNaN(parseFloat(debtValue))) {
-            console.error('Invalid debt input');
+        if (!debtName.trim() || !debtValue.trim() || isNaN(parseFloat(debtValue)) || parseFloat(debtValue) <= 0) {
+            console.error('Debt value must be a positive number');
             return;
         }
 
@@ -173,13 +186,24 @@ const Dashboard = () => {
                     onChange={(e) => setAssetName(e.target.value)}
                     className="p-2 mb-2 w-full border rounded text-black"
                 />
-                <input
-                    type="number"
-                    placeholder="Asset Value"
-                    value={assetValue}
-                    onChange={(e) => setAssetValue(e.target.value)}
-                    className="p-2 mb-2 w-full border rounded text-black"
-                />
+                {!isRealTimeTracked && (
+                    <input
+                        type="number"
+                        placeholder="Asset Value"
+                        value={assetValue}
+                        onChange={(e) => setAssetValue(e.target.value)}
+                        className="p-2 mb-2 w-full border rounded text-black"
+                    />
+                )}
+                {isRealTimeTracked && (
+                    <input
+                        type="text"
+                        placeholder="Asset Symbol (e.g., AAPL)"
+                        value={assetSymbol}
+                        onChange={(e) => setAssetSymbol(e.target.value)}
+                        className="p-2 mb-2 w-full border rounded text-black"
+                    />
+                )}
                 <div className="flex items-center">
                     <input
                         type="checkbox"
@@ -242,3 +266,7 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+
+                    
+

@@ -3,10 +3,12 @@ package com.wealthsync.backend.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,9 +17,8 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    // Use externalized secret key from application.properties
-    @Value("${jwt.secret}")
-    private String SECRET_KEY;
+    // Use a securely generated secret key (or load it from application.properties if needed)
+    private final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     // Generate token for user
     public String generateToken(UserDetails userDetails) {
@@ -32,7 +33,7 @@ public class JwtUtil {
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))  // 10 hours validity
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .signWith(SECRET_KEY)  // Use the secure key for signing
                 .compact();
     }
 
@@ -50,8 +51,9 @@ public class JwtUtil {
     // Extract all claims with exception handling
     private Claims extractAllClaims(String token) {
         try {
-            return Jwts.parser()
-                    .setSigningKey(SECRET_KEY)
+            return Jwts.parserBuilder()
+                    .setSigningKey(SECRET_KEY)  // Use the same key for parsing
+                    .build()
                     .parseClaimsJws(token)
                     .getBody();
         } catch (Exception e) {
@@ -75,3 +77,5 @@ public class JwtUtil {
         return (extractedUsername.equals(username) && !isTokenExpired(token));
     }
 }
+
+

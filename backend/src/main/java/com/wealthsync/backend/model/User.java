@@ -1,6 +1,7 @@
 package com.wealthsync.backend.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Table("users") // Map this entity to the 'users' table in the database
@@ -8,13 +9,20 @@ public class User {
 
     @Id
     private Long id;
-    private String firstName;  // Changed from 'name' to 'firstName'
-    private String lastName;   // Added lastName
+
+    @Column("first_name")  // Map the field to 'first_name' column
+    private String firstName;
+
+    @Column("last_name")   // Map the field to 'last_name' column
+    private String lastName;
+
+    @Column("email")  // Map the field to 'email' column
     private String email;
+
+    @Column("password")  // Map the field to 'password' column
     private String password;
 
     // Getters and Setters
-
     public Long getId() {
         return id;
     }
@@ -55,4 +63,8 @@ public class User {
         this.password = password;
     }
 }
+
+
+
+
 

@@ -2,11 +2,14 @@ package com.wealthsync.backend.service;
 
 import com.wealthsync.backend.common.AssetRepository;
 import com.wealthsync.backend.model.Asset;
+import com.wealthsync.backend.model.AssetType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,7 +46,16 @@ public class AssetService {
     @Transactional
     public Asset addAsset(Asset asset) {
         logger.info("Adding a new asset: {}", asset.getAssetName());
-        validateRealTimeAsset(asset);
+        validateAsset(asset);
+
+        // Set initial value for real-time tracked assets
+        if (asset.getIsRealTimeTracked()) {
+            asset.setValue(BigDecimal.ZERO); // Initial value will be updated in real-time
+            asset.setLastUpdated(LocalDate.now()); // Set last updated date for real-time tracked assets
+        } else {
+            asset.setLastUpdated(null); // No need for last updated date for manual assets
+        }
+
         return assetRepository.save(asset);
     }
 
@@ -51,7 +63,7 @@ public class AssetService {
     @Transactional
     public Asset updateAsset(Long id, Asset asset) {
         logger.info("Updating asset with ID: {}", id);
-        validateRealTimeAsset(asset);
+        validateAsset(asset);
 
         Asset assetToUpdate = assetRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Asset not found with ID: " + id));
@@ -64,8 +76,13 @@ public class AssetService {
         assetToUpdate.setValue(asset.getValue());
         assetToUpdate.setSymbol(asset.getSymbol());
         assetToUpdate.setIsRealTimeTracked(asset.getIsRealTimeTracked());
-        assetToUpdate.setPurchaseDate(asset.getPurchaseDate());
-        assetToUpdate.setLastUpdated(asset.getLastUpdated());
+
+        // Update lastUpdated date only if it's a real-time tracked asset
+        if (asset.getIsRealTimeTracked()) {
+            assetToUpdate.setLastUpdated(LocalDate.now());
+        } else {
+            assetToUpdate.setLastUpdated(null);
+        }
 
         logger.info("Updated Asset: {}", assetToUpdate);
 
@@ -92,18 +109,26 @@ public class AssetService {
         return assetRepository.findByIsRealTimeTracked(true);
     }
 
-    // Validation for real-time tracked assets
-    private void validateRealTimeAsset(Asset asset) {
+    // General validation for assets
+    private void validateAsset(Asset asset) {
+        // Validation for real-time tracked assets
         if (asset.getIsRealTimeTracked()) {
             if (asset.getSymbol() == null || asset.getSymbol().isEmpty()) {
                 throw new IllegalArgumentException("Real-time tracked assets must have a valid symbol.");
             }
-            if (asset.getAssetType() == null) {
-                throw new IllegalArgumentException("Real-time tracked assets must have a valid asset type.");
+            if (asset.getAssetType() == null || !(asset.getAssetType() == AssetType.CRYPTO || asset.getAssetType() == AssetType.STOCK)) {
+                throw new IllegalArgumentException("Real-time tracked assets must have a valid asset type (CRYPTO or STOCK).");
+            }
+        } else {
+            // Validation for manual assets
+            if (asset.getValue() == null || asset.getValue().compareTo(BigDecimal.ZERO) < 0) {
+                throw new IllegalArgumentException("Manual assets must have a valid value greater than or equal to 0.");
             }
         }
     }
 }
+
+
 
 
 

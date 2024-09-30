@@ -40,11 +40,35 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
-		<!-- JWT Dependency -->
+		<!-- Updated JWT Dependency -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
-			<version>0.9.1</version>
+			<version>0.11.2</version>
+		</dependency>
+
+		<!-- Add jjwt-api and jjwt-impl Dependencies -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>0.11.2</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.11.2</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId> <!-- If you prefer Jackson as JSON parser -->
+			<version>0.11.2</version>
+		</dependency>
+
+		<!-- javax.xml.bind dependency to support older APIs -->
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>2.3.1</version>
 		</dependency>
 
 		<!-- MySQL Connector -->
@@ -113,5 +137,6 @@
 	</build>
 
 </project>
+
 
 
