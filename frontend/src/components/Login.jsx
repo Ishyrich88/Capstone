@@ -1,22 +1,35 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
             const response = await axios.post('http://localhost:8080/auth/login', {
                 email,
-                password
+                password,
             });
-            // Handle successful login
-            console.log('Logged in:', response.data);
+
+            // Store the JWT token in localStorage
+            localStorage.setItem('token', response.data.jwtToken);
+
+            // Optional: Store user information (if any)
+            localStorage.setItem('user', JSON.stringify(response.data.user));
+
+            // Display a success message
+            alert('Login successful!');
+
+            // Redirect to the dashboard page
+            navigate('/dashboard');
         } catch (error) {
-            setError('Invalid login credentials');
+            console.error('Login error:', error);
+            setError('Invalid login credentials. Please try again.');
         }
     };
 
@@ -32,6 +45,7 @@ const Login = () => {
                         className="p-2 border w-full"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        required
                     />
                 </div>
                 <div className="mb-4">
@@ -41,6 +55,7 @@ const Login = () => {
                         className="p-2 border w-full"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        required
                     />
                 </div>
                 <button type="submit" className="bg-blue-500 text-white p-2 rounded">
@@ -52,3 +67,4 @@ const Login = () => {
 };
 
 export default Login;
+

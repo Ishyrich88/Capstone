@@ -14,13 +14,16 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOriginPatterns("http://localhost:5173") // Use allowedOriginPatterns instead
+                        .allowedOriginPatterns("http://localhost:5173", "http://localhost:3000") // Allow frontend on both ports for testing
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        .allowCredentials(true);
+                        .exposedHeaders("Authorization", "Content-Type") // Ensure headers like Authorization are accessible in responses
+                        .allowCredentials(true)
+                        .maxAge(3600); // Cache CORS preflight response for 1 hour (3600 seconds)
             }
         };
     }
 }
+
 
 

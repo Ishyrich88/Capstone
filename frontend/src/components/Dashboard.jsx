@@ -6,7 +6,7 @@ import { fetchDebts, addDebt } from '../services/debtService';
 
 const Dashboard = () => {
     const [portfolios, setPortfolios] = useState([]);
-    const [assets, setAssets] = useState([]);
+    const [assets, setAssets] = useState([]);  // Ensure assets is always initialized as an array
     const [debts, setDebts] = useState([]);
     const [netWorth, setNetWorth] = useState(0);
     const [newPortfolioName, setNewPortfolioName] = useState('');
@@ -31,7 +31,7 @@ const Dashboard = () => {
     const loadPortfolios = async () => {
         try {
             const portfoliosData = await fetchPortfoliosByUserId(userId);
-            setPortfolios(portfoliosData);
+            setPortfolios(portfoliosData || []);  // Ensure portfoliosData is an array or set to empty array
         } catch (error) {
             console.error('Error loading portfolios:', error);
         }
@@ -58,16 +58,16 @@ const Dashboard = () => {
     // Fetch assets using service
     const loadAssets = async () => {
         try {
-            const assetsData = await fetchAssets(userId); 
-            setAssets(assetsData);
+            const assetsData = await fetchAssets(userId);
+            setAssets(Array.isArray(assetsData) ? assetsData : []); // Ensure assetsData is an array or set to empty array
         } catch (error) {
             console.error('Error loading assets:', error);
+            setAssets([]); // Set assets to an empty array in case of an error
         }
     };
 
     // Add an asset using service
     const handleAddAsset = async () => {
-        // Validate input based on real-time tracking
         if (isRealTimeTracked) {
             if (!assetSymbol.trim()) {
                 console.error('Symbol is required for real-time tracked assets');
@@ -80,19 +80,17 @@ const Dashboard = () => {
             }
         }
 
-        // Construct asset object based on tracking type
         const newAsset = {
             userId: userId,
             assetName: assetName.trim(),
-            value: isRealTimeTracked ? 0 : parseFloat(assetValue),  // Set value to 0 for real-time tracked assets
-            symbol: isRealTimeTracked ? assetSymbol.trim() : null,  // Use symbol only for real-time tracked assets
+            value: isRealTimeTracked ? 0 : parseFloat(assetValue),
+            symbol: isRealTimeTracked ? assetSymbol.trim() : null,
             isRealTimeTracked,
         };
 
         try {
             const addedAsset = await addAsset(newAsset);
             setAssets([...assets, addedAsset]);
-            // Reset state after adding the asset
             setAssetName('');
             setAssetValue('');
             setAssetSymbol('');
@@ -105,10 +103,11 @@ const Dashboard = () => {
     // Fetch debts using service
     const loadDebts = async () => {
         try {
-            const debtsData = await fetchDebts(userId);  
-            setDebts(debtsData);
+            const debtsData = await fetchDebts(userId);
+            setDebts(Array.isArray(debtsData) ? debtsData : []);  // Ensure debtsData is an array or set to empty array
         } catch (error) {
             console.error('Error loading debts:', error);
+            setDebts([]); // Set debts to an empty array in case of an error
         }
     };
 
@@ -122,7 +121,7 @@ const Dashboard = () => {
         const newDebt = {
             userId: userId,
             debtName: debtName.trim(),
-            value: parseFloat(debtValue) || 0,  
+            value: parseFloat(debtValue) || 0,
         };
 
         try {
@@ -217,12 +216,17 @@ const Dashboard = () => {
                 </button>
 
                 <h3 className="text-xl font-bold mt-6">Assets</h3>
+                {/* Add default empty array to avoid map error */}
                 <ul>
-                    {assets.map(asset => (
-                        <li key={asset.id}>
-                            {asset.assetName}: ${asset.value ? asset.value.toFixed(2) : 0} {asset.isRealTimeTracked ? '(Real-Time)' : ''}
-                        </li>
-                    ))}
+                    {Array.isArray(assets) && assets.length > 0 ? (
+                        assets.map((asset) => (
+                            <li key={asset.id}>
+                                {asset.assetName}: ${asset.value ? asset.value.toFixed(2) : 0} {asset.isRealTimeTracked ? '(Real-Time)' : ''}
+                            </li>
+                        ))
+                    ) : (
+                        <li>No assets available.</li>
+                    )}
                 </ul>
             </div>
 
@@ -249,7 +253,7 @@ const Dashboard = () => {
 
                 <h3 className="text-xl font-bold mt-6">Debts</h3>
                 <ul>
-                    {debts.map(debt => (
+                    {debts.map((debt) => (
                         <li key={debt.id}>
                             {debt.debtName}: ${debt.value ? debt.value.toFixed(2) : 0}
                         </li>
@@ -266,6 +270,7 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 
 
                     
