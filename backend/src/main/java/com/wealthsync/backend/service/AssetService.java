@@ -19,9 +19,13 @@ public class AssetService {
     private static final Logger logger = LoggerFactory.getLogger(AssetService.class);
 
     private final AssetRepository assetRepository;
+    private final CryptoService cryptoService;
+    private final StockService stockService;
 
-    public AssetService(AssetRepository assetRepository) {
+    public AssetService(AssetRepository assetRepository, CryptoService cryptoService, StockService stockService) {
         this.assetRepository = assetRepository;
+        this.cryptoService = cryptoService;
+        this.stockService = stockService;
     }
 
     // Get all assets without filtering by user
@@ -42,7 +46,7 @@ public class AssetService {
         return assetRepository.findById(id);
     }
 
-    // Add a new asset with validation
+    // Add a new asset with validation and setting up initial values
     @Transactional
     public Asset addAsset(Asset asset) {
         logger.info("Adding a new asset: {}", asset.getAssetName());
@@ -50,7 +54,8 @@ public class AssetService {
 
         // Set initial value for real-time tracked assets
         if (asset.getIsRealTimeTracked()) {
-            asset.setValue(BigDecimal.ZERO); // Initial value will be updated in real-time
+            BigDecimal initialValue = fetchRealTimePrice(asset);
+            asset.setValue(initialValue != null ? initialValue : BigDecimal.ZERO); // Initial value fetched or set to 0
             asset.setLastUpdated(LocalDate.now()); // Set last updated date for real-time tracked assets
         } else {
             asset.setLastUpdated(null); // No need for last updated date for manual assets
@@ -79,6 +84,8 @@ public class AssetService {
 
         // Update lastUpdated date only if it's a real-time tracked asset
         if (asset.getIsRealTimeTracked()) {
+            BigDecimal updatedPrice = fetchRealTimePrice(assetToUpdate); // Fetch latest price if needed
+            assetToUpdate.setValue(updatedPrice != null ? updatedPrice : assetToUpdate.getValue());
             assetToUpdate.setLastUpdated(LocalDate.now());
         } else {
             assetToUpdate.setLastUpdated(null);
@@ -111,6 +118,10 @@ public class AssetService {
 
     // General validation for assets
     private void validateAsset(Asset asset) {
+        if (asset.getAssetName() == null || asset.getAssetName().isEmpty()) {
+            throw new IllegalArgumentException("Asset name cannot be empty.");
+        }
+
         // Validation for real-time tracked assets
         if (asset.getIsRealTimeTracked()) {
             if (asset.getSymbol() == null || asset.getSymbol().isEmpty()) {
@@ -126,7 +137,26 @@ public class AssetService {
             }
         }
     }
+
+    // Fetch initial or real-time price for a real-time tracked asset (CRYPTO or STOCK)
+    private BigDecimal fetchRealTimePrice(Asset asset) {
+        BigDecimal price = BigDecimal.ZERO;
+
+        try {
+            if (asset.getAssetType() == AssetType.CRYPTO) {
+                price = cryptoService.getCryptoPrice(asset.getSymbol());
+            } else if (asset.getAssetType() == AssetType.STOCK) {
+                price = stockService.getStockPrice(asset.getSymbol());
+            }
+            logger.info("Fetched real-time price for asset {}: {}", asset.getAssetName(), price);
+        } catch (Exception e) {
+            logger.error("Error fetching real-time price for asset {}: {}", asset.getAssetName(), e.getMessage());
+        }
+
+        return price;
+    }
 }
+
 
 
 

@@ -19,8 +19,13 @@ const Login = () => {
             // Store the JWT token in localStorage
             localStorage.setItem('token', response.data.jwtToken);
 
-            // Optional: Store user information (if any)
-            localStorage.setItem('user', JSON.stringify(response.data.user));
+            // Store user information (including userId) in localStorage
+            if (response.data.user && response.data.user.id) {
+                localStorage.setItem('userId', response.data.user.id);
+                localStorage.setItem('user', JSON.stringify(response.data.user)); // Store user object
+            } else {
+                console.error('User ID is missing in the response data.');
+            }
 
             // Display a success message
             alert('Login successful!');
@@ -67,4 +72,5 @@ const Login = () => {
 };
 
 export default Login;
+
 

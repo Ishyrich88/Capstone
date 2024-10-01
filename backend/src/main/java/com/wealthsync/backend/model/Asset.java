@@ -24,10 +24,10 @@ public class Asset {
     private String assetName;  // Name of the asset (e.g., Bitcoin, Rolex)
 
     @Column("symbol")
-    private String symbol;  // Symbol for real-time tracked assets (e.g., BTC, AAPL)
+    private String symbol;  // Symbol for real-time tracked assets (e.g., BTC, AAPL). Null for manual assets.
 
     @Column("value")
-    private BigDecimal value;  // Current value of the asset
+    private BigDecimal value;  // Current value of the asset. Cannot be null for manual assets.
 
     @Column("is_real_time_tracked")
     private Boolean isRealTimeTracked;  // Indicates if the asset is tracked in real-time
@@ -39,16 +39,14 @@ public class Asset {
     public Asset() {}
 
     // Constructor for real-time tracked assets (CRYPTO, STOCK)
-    public Asset(Long userId, AssetType assetType, String assetName, String symbol, Boolean isRealTimeTracked) {
+    public Asset(Long userId, AssetType assetType, String assetName, String symbol) {
         this.userId = userId;
         this.assetType = assetType;
         this.assetName = assetName;
         this.symbol = symbol;  // Symbol required for real-time tracked assets
-        this.isRealTimeTracked = isRealTimeTracked;
+        this.isRealTimeTracked = true;  // Set real-time tracking as true
         this.value = BigDecimal.ZERO;  // Default initial value for real-time tracked assets
-        if (isRealTimeTracked) {
-            this.lastUpdated = LocalDate.now();  // Only set lastUpdated for real-time tracked assets
-        }
+        this.lastUpdated = LocalDate.now();  // Only set lastUpdated for real-time tracked assets
     }
 
     // Constructor for manual assets
@@ -108,6 +106,9 @@ public class Asset {
     }
 
     public void setValue(BigDecimal value) {
+        if (value != null && value.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Asset value must be a positive number.");
+        }
         this.value = value;
     }
 
@@ -141,6 +142,8 @@ public class Asset {
                 '}';
     }
 }
+
+
 
 
 

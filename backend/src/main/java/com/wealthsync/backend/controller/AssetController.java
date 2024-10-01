@@ -51,6 +51,12 @@ public class AssetController {
     public ResponseEntity<Asset> addAsset(@RequestBody Asset asset) {
         try {
             logger.info("Adding new asset: {}", asset);
+
+            if (asset.getAssetType() == null) {
+                logger.warn("Invalid asset type: Asset type cannot be null.");
+                return ResponseEntity.badRequest().body(null);
+            }
+
             if (!validateAssetRequest(asset)) {
                 logger.warn("Invalid asset details provided: {}", asset);
                 return ResponseEntity.badRequest().build();
@@ -82,7 +88,13 @@ public class AssetController {
     public ResponseEntity<Asset> updateAsset(@PathVariable Long id, @RequestBody Asset asset) {
         try {
             logger.info("Updating asset with ID: {}", id);
-            Asset updatedAsset = assetService.updateAsset(id, asset); // Pass both ID and Asset object
+
+            if (asset.getAssetType() == null) {
+                logger.warn("Invalid asset type: Asset type cannot be null.");
+                return ResponseEntity.badRequest().build();
+            }
+
+            Asset updatedAsset = assetService.updateAsset(id, asset);
             return ResponseEntity.ok(updatedAsset);
         } catch (IllegalArgumentException e) {
             logger.warn("Asset not found or invalid data with ID: {}", id);
@@ -108,6 +120,16 @@ public class AssetController {
 
     // Private method to validate incoming asset data
     private boolean validateAssetRequest(Asset asset) {
+        if (asset.getAssetType() == null) {
+            logger.warn("Invalid asset request: Asset type is required.");
+            return false;
+        }
+
+        if (asset.getIsRealTimeTracked() == null) {
+            logger.warn("Invalid asset request: Real-time tracking status is required.");
+            return false;
+        }
+
         if (asset.getIsRealTimeTracked()) {
             return asset.getSymbol() != null && !asset.getSymbol().isEmpty()
                     && (asset.getAssetType() == AssetType.CRYPTO || asset.getAssetType() == AssetType.STOCK);
@@ -134,6 +156,7 @@ public class AssetController {
         return price;
     }
 }
+
 
 
 

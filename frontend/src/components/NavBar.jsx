@@ -34,7 +34,6 @@ const NavBar = () => {
                 {/* Desktop Menu */}
                 <div className="hidden md:flex space-x-6">
                     <Link to="/dashboard" className="hover:text-accent">Dashboard</Link>
-                    <Link to="/assets" className="hover:text-accent">Assets</Link>
                     {/* Show Login/Register if not logged in */}
                     {!isLoggedIn ? (
                         <>
@@ -61,7 +60,6 @@ const NavBar = () => {
             {menuOpen && (
                 <div className="md:hidden">
                     <Link to="/dashboard" className="block px-4 py-2 hover:bg-gray-700">Dashboard</Link>
-                    <Link to="/assets" className="block px-4 py-2 hover:bg-gray-700">Assets</Link>
                     {/* Show Login/Register if not logged in */}
                     {!isLoggedIn ? (
                         <>
@@ -81,4 +79,5 @@ const NavBar = () => {
 };
 
 export default NavBar;
+
 

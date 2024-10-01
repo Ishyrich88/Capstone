@@ -17,6 +17,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.Collections;
 
 @RestController
@@ -96,6 +98,45 @@ public class AuthController {
             return ResponseEntity.status(500).body("An error occurred during registration: " + e.getMessage());
         }
     }
+
+    // New: Get user information endpoint
+    @GetMapping("/userinfo")
+    public ResponseEntity<?> getUserInfo(HttpServletRequest request) {
+        try {
+            // Extract JWT token from Authorization header
+            final String authorizationHeader = request.getHeader("Authorization");
+            String jwt = null;
+            String username = null;
+
+            // Check if the header contains the Bearer token
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                jwt = authorizationHeader.substring(7); // Remove "Bearer " to get the token
+                username = jwtUtil.extractUsername(jwt); // Extract username from the token
+            }
+
+            // If username is not found, return error
+            if (username == null) {
+                return ResponseEntity.status(401).body("Invalid token or user not authenticated.");
+            }
+
+            // Fetch user details using the username (email)
+            User user = userService.findByEmail(username);
+
+
+            // If user is not found, return not found status
+            if (user == null) {
+                return ResponseEntity.status(404).body("User not found.");
+            }
+
+            // Return user details
+            return ResponseEntity.ok(user);
+
+        } catch (Exception e) {
+            logger.error("Error fetching user info: {}", e.getMessage());
+            return ResponseEntity.status(500).body("An error occurred while fetching user information.");
+        }
+    }
 }
+
 
 
