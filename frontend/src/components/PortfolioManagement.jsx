@@ -1,16 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Import axios for API calls
+import api from '../services/api'; // Import the custom API instance
 import { fetchPortfoliosByUserId, addPortfolio, deletePortfolio } from '../services/portfolioService';
 import { addAsset } from '../services/assetService';
 import { addDebt } from '../services/debtService';
-
-// Create an Axios instance to reuse configuration
-const api = axios.create({
-    baseURL: 'http://localhost:8080',
-    headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-    },
-});
 
 const PortfolioManagement = () => {
     const [portfolios, setPortfolios] = useState([]);
@@ -30,22 +22,14 @@ const PortfolioManagement = () => {
     const [debtName, setDebtName] = useState('');
     const [debtValue, setDebtValue] = useState('');
 
-    // New function to fetch user details from the backend
+    // Function to fetch user details from the backend
     const fetchUserId = async () => {
         try {
-            // Check if token is available
-            const token = localStorage.getItem('token');
-            if (!token) {
-                console.error('JWT token is missing. Please log in again.');
-                return;
-            }
-
-            // Make the request to fetch user info
-            const response = await api.get('/auth/userinfo');
+            const response = await api.get('/auth/userinfo'); // Use the imported `api` instance
             setUserId(response.data.id); // Set the userId from the response
             console.log('User ID fetched successfully:', response.data.id); // Log the user ID to verify
         } catch (error) {
-            console.error('Error fetching user information:', error);
+            console.error('Error fetching user information:', error.response ? error.response.data : error.message);
         }
     };
 
@@ -307,6 +291,7 @@ const PortfolioManagement = () => {
 };
 
 export default PortfolioManagement;
+
 
 
 
