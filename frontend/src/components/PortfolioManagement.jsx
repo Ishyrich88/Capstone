@@ -43,6 +43,7 @@ const PortfolioManagement = () => {
             // Make the request to fetch user info
             const response = await api.get('/auth/userinfo');
             setUserId(response.data.id); // Set the userId from the response
+            console.log('User ID fetched successfully:', response.data.id); // Log the user ID to verify
         } catch (error) {
             console.error('Error fetching user information:', error);
         }
@@ -56,6 +57,7 @@ const PortfolioManagement = () => {
     // Fetch portfolios when userId changes
     useEffect(() => {
         if (userId) {
+            console.log('User ID is available, loading portfolios:', userId);
             loadPortfolios(userId); // Load portfolios once userId is available
         } else {
             console.error('User ID is not found. Cannot load portfolios.'); // Error handling for missing user ID
@@ -67,6 +69,7 @@ const PortfolioManagement = () => {
         try {
             const data = await fetchPortfoliosByUserId(userId); // API call to fetch portfolios
             setPortfolios(data); // Set the portfolios state with fetched data
+            console.log('Portfolios loaded successfully:', data);
         } catch (error) {
             console.error('Error fetching portfolios:', error);
         }
@@ -85,6 +88,7 @@ const PortfolioManagement = () => {
             const addedPortfolio = await addPortfolio(newPortfolio); // API call to add a new portfolio
             setPortfolios([...portfolios, addedPortfolio]); // Update the portfolios state
             setNewPortfolioName(''); // Reset the newPortfolioName state
+            console.log('New portfolio added successfully:', addedPortfolio);
         } catch (error) {
             console.error('Error adding portfolio:', error);
         }
@@ -98,6 +102,7 @@ const PortfolioManagement = () => {
             await deletePortfolio(portfolioId); // API call to delete a portfolio
             setPortfolios(portfolios.filter((portfolio) => portfolio.id !== portfolioId)); // Remove the portfolio from UI
             setSelectedPortfolio(null); // Deselect portfolio if deleted
+            console.log(`Portfolio with ID ${portfolioId} deleted successfully.`);
         } catch (error) {
             console.error('Error deleting portfolio:', error);
         }
@@ -118,11 +123,14 @@ const PortfolioManagement = () => {
             isRealTimeTracked: false, // Indicate it's a manual asset
         };
 
+        console.log('Adding Manual Asset:', newAsset);
+
         try {
             await addAsset(newAsset); // API call to add a new asset
             alert('Manual asset added successfully');
             setManualAssetName(''); // Reset manual asset fields
             setManualAssetValue('');
+            console.log('Manual asset added successfully:', newAsset);
         } catch (error) {
             console.error('Error adding manual asset:', error);
         }
@@ -144,11 +152,14 @@ const PortfolioManagement = () => {
             value: 0, // Initial value will be zero until updated in real-time
         };
 
+        console.log('Adding Real-Time Asset:', newAsset);
+
         try {
             await addAsset(newAsset); // API call to add a new real-time asset
             alert('Real-time asset added successfully');
             setRealTimeAssetName(''); // Reset real-time asset fields
             setRealTimeAssetSymbol('');
+            console.log('Real-time asset added successfully:', newAsset);
         } catch (error) {
             console.error('Error adding real-time asset:', error);
         }
@@ -168,11 +179,14 @@ const PortfolioManagement = () => {
             value: parseFloat(debtValue),
         };
 
+        console.log('Adding Debt:', newDebt);
+
         try {
             await addDebt(newDebt); // API call to add a new debt
             alert('Debt added successfully');
             setDebtName(''); // Reset debt fields
             setDebtValue('');
+            console.log('Debt added successfully:', newDebt);
         } catch (error) {
             console.error('Error adding debt:', error);
         }
@@ -293,6 +307,7 @@ const PortfolioManagement = () => {
 };
 
 export default PortfolioManagement;
+
 
 
 
