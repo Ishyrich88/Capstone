@@ -65,6 +65,7 @@ public class AssetController {
             // If the asset is tracked in real-time, fetch its current price
             if (asset.getIsRealTimeTracked()) {
                 BigDecimal initialPrice = fetchRealTimePrice(asset);
+                System.out.println("!!!This is asset type: " + asset.getAssetType());
                 if (initialPrice == null || initialPrice.compareTo(BigDecimal.ZERO) <= 0) {
                     logger.warn("Unable to fetch a valid price for real-time tracked asset: {}", asset);
                     return ResponseEntity.badRequest().body(null);

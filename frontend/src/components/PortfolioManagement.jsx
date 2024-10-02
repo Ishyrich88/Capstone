@@ -157,11 +157,11 @@ const PortfolioManagement = () => {
 
         const newDebt = {
             userId,
-            portfolioId: selectedPortfolio.id,
             debtName: debtName.trim(),
-            value: parseFloat(debtValue),
+            amount: parseFloat(debtValue),
         };
 
+        console.log(newDebt)
         try {
             await addDebt(newDebt);
             alert('Debt added successfully');
