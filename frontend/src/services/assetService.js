@@ -16,20 +16,30 @@ export const fetchAssets = async (userId) => {
 // Add a new asset with validation
 export const addAsset = async (asset) => {
     try {
+        console.log("This is the asset in AS 19: ", asset);
+
         // Validate that the asset name is not empty
         if (!asset.assetName || asset.assetName.trim() === '') {
             throw new Error('Asset name cannot be empty.');
         }
 
         // Validate that asset value is present and is a number
-        if (!asset.value || isNaN(parseFloat(asset.value))) {
+        if (asset.value === undefined || isNaN(parseFloat(asset.value))) {
             throw new Error('Asset value must be a number.');
         }
 
-        // If the asset is real-time tracked, ensure that a symbol is provided
+        // Validate asset type
+        if (!asset.assetType || !['MANUAL', 'STOCK', 'CRYPTO'].includes(asset.assetType)) {
+            throw new Error('Asset type must be one of: MANUAL, STOCK, or CRYPTO.');
+        }
+
+        // Ensure that if the asset is real-time tracked, a symbol is provided
         if (asset.isRealTimeTracked && (!asset.symbol || asset.symbol.trim() === '')) {
             throw new Error('Symbol is required for real-time tracked assets.');
         }
+
+        // Remove any unnecessary default values
+        console.log("Validated asset:", asset);
 
         // Make the API call to add the asset
         const response = await axios.post(`${BASE_URL}/assets`, asset);
@@ -39,4 +49,5 @@ export const addAsset = async (asset) => {
         throw error;
     }
 };
+
 
