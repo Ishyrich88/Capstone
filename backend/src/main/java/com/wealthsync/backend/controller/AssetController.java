@@ -65,7 +65,6 @@ public class AssetController {
             // If the asset is tracked in real-time, fetch its current price
             if (asset.getIsRealTimeTracked()) {
                 BigDecimal initialPrice = fetchRealTimePrice(asset);
-                System.out.println("!!!This is asset type: " + asset.getAssetType());
                 if (initialPrice == null || initialPrice.compareTo(BigDecimal.ZERO) <= 0) {
                     logger.warn("Unable to fetch a valid price for real-time tracked asset: {}", asset);
                     return ResponseEntity.badRequest().body(null);
@@ -119,6 +118,40 @@ public class AssetController {
         }
     }
 
+    // NEW ENDPOINT: Fetch real-time price of a specific cryptocurrency
+    @GetMapping("/crypto/price/{symbol}")
+    public ResponseEntity<BigDecimal> getCryptoPrice(@PathVariable String symbol) {
+        try {
+            logger.info("Fetching crypto price for symbol: {}", symbol);
+            BigDecimal price = cryptoService.getCryptoPrice(symbol);
+            if (price.compareTo(BigDecimal.ZERO) == 0) {
+                logger.warn("Failed to fetch price for crypto symbol: {}", symbol);
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(price);
+        } catch (Exception e) {
+            logger.error("Error fetching price for crypto symbol: {}: {}", symbol, e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // NEW ENDPOINT: Fetch real-time price of a specific stock
+    @GetMapping("/stock/price/{symbol}")
+    public ResponseEntity<BigDecimal> getStockPrice(@PathVariable String symbol) {
+        try {
+            logger.info("Fetching stock price for symbol: {}", symbol);
+            BigDecimal price = stockService.getStockPrice(symbol);
+            if (price.compareTo(BigDecimal.ZERO) == 0) {
+                logger.warn("Failed to fetch price for stock symbol: {}", symbol);
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(price);
+        } catch (Exception e) {
+            logger.error("Error fetching price for stock symbol: {}: {}", symbol, e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     // Private method to validate incoming asset data
     private boolean validateAssetRequest(Asset asset) {
         if (asset.getAssetType() == null) {
@@ -157,6 +190,7 @@ public class AssetController {
         return price;
     }
 }
+
 
 
 
