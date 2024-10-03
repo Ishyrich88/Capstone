@@ -15,7 +15,8 @@ const getAuthHeader = () => {
 // Fetch portfolios by user ID
 export const fetchPortfoliosByUserId = async (userId) => {
     try {
-        const response = await axios.get(`${BASE_URL}/${userId}`, getAuthHeader());
+        // Corrected URL to include '/user'
+        const response = await axios.get(`${BASE_URL}/user/${userId}`, getAuthHeader());
         return response.data;
     } catch (error) {
         console.error(`Error fetching portfolios for user ID ${userId}:`, error);
@@ -43,5 +44,6 @@ export const deletePortfolio = async (id) => {
         throw error;
     }
 };
+
 
 
