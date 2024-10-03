@@ -1,5 +1,3 @@
-// src/components/Logout.jsx
-
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,12 +5,23 @@ const Logout = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        console.log("Logging out...");
+
         // Remove JWT token from local storage
         localStorage.removeItem('jwtToken');
+        console.log("JWT Token removed");
+
         // Optionally remove user-related information
         localStorage.removeItem('user');
-        // Redirect to login page
-        navigate('/login');
+        console.log("User information removed");
+
+        // Navigate to login page
+        if (navigate) {
+            console.log("Navigating to /login...");
+            navigate('/login');
+        } else {
+            console.error("Navigation function is not available.");
+        }
     }, [navigate]);
 
     return (
@@ -23,3 +32,4 @@ const Logout = () => {
 };
 
 export default Logout;
+
