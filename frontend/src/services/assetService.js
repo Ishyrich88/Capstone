@@ -13,6 +13,17 @@ export const fetchAssets = async (userId) => {
     }
 };
 
+// Get all assets by portfolio ID
+export const getAssetsByPortfolioId = async (portfolioId) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/assets/portfolio/${portfolioId}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching assets for portfolio ID ${portfolioId}:`, error);
+        throw error;
+    }
+};
+
 // Add a new asset with validation
 export const addAsset = async (asset) => {
     try {
@@ -49,5 +60,6 @@ export const addAsset = async (asset) => {
         throw error;
     }
 };
+
 
 

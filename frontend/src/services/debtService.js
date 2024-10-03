@@ -24,3 +24,16 @@ export const addDebt = async (debt) => {
     }
 };
 
+// Get debts by user ID
+export const getDebtsByUserId = async (userId) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/debts/user/${userId}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching debts for user ID ${userId}:`, error);
+        throw error;
+    }
+};
+
+
+
