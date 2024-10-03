@@ -211,90 +211,91 @@ const PortfolioManagement = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 bg-body-bg">
-      <h1 className="text-3xl font-bold mb-4 text-center text-primary-text">Portfolio Management</h1>
+    <div className=" mx-auto p-4 bg-body-bg text-primary-text font-roboto text-sm  bg-green-200 w-full">
+      <h1 className="text-2xl font-bold mb-4 text-center">Portfolio Management</h1>
 
       {/* Portfolio Selection and Creation */}
-      <div className="mb-8 bg-gray-100 p-4 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold mb-4 text-center text-primary-text">Your Portfolios</h2>
-        <ul className="mb-4">
-          {portfolios.length > 0 ? (
-            portfolios.map((portfolio) => (
-              <li key={portfolio.id} className="mb-2 border-b">
-                <div
-                  className={`flex justify-between items-center cursor-pointer p-2 bg-gray-200 hover:bg-gray-300 rounded ${
-                    expandedPortfolioId === portfolio.id ? 'bg-accent text-white' : ''
-                  }`}
-                  onClick={() => handleSelectPortfolio(portfolio)}
-                >
-                  <span>
-                    {portfolio.name} {expandedPortfolioId === portfolio.id ? '▲' : '▼'}
-                  </span>
-                  <span>Total: ${assets.filter((asset) => asset.portfolioId === portfolio.id).reduce((total, asset) => total + asset.value, 0).toFixed(2)}</span>
+      <div className="mb-6 bg-gray-100 p-4 rounded-lg shadow-sm text-sm w-full bg-red-200  sm:w-full sm:bg-yellow-200 md:w-full md:bg-pink-300  lg:bg-purple-300 lg:w-1/3 lg:mx-auto">
+  <h2 className="text-xl font-bold mb-3 text-center">Your Portfolios</h2>
+  <ul className="mb-4">
+    {portfolios.length > 0 ? (
+      portfolios.map((portfolio) => (
+        <li key={portfolio.id} className="mb-2 border-b">
+          <div
+            className={`flex justify-between items-center cursor-pointer p-2 bg-gray-200 hover:bg-gray-300 rounded-sm ${
+              expandedPortfolioId === portfolio.id ? 'bg-accent text-white' : ''
+            }`}
+            onClick={() => handleSelectPortfolio(portfolio)}
+          >
+            <span>
+              {portfolio.name} {expandedPortfolioId === portfolio.id ? '▲' : '▼'}
+            </span>
+            <span>Total: ${assets.filter((asset) => asset.portfolioId === portfolio.id).reduce((total, asset) => total + asset.value, 0).toFixed(2)}</span>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDeletePortfolio(portfolio.id);
+              }}
+              className="bg-red-500 text-white p-1 rounded hover:bg-red-700"
+            >
+              Delete
+            </button>
+          </div>
+
+          {/* Expanded portfolio content */}
+          {expandedPortfolioId === portfolio.id && (
+            <div className="p-3 bg-gray-50 rounded-sm">
+              <h3 className="text-lg font-semibold mb-2">Assets:</h3>
+              {assets.filter((asset) => asset.portfolioId === portfolio.id).map((asset) => (
+                <div key={asset.id} className="flex justify-between items-center p-2 border-b bg-white rounded-sm">
+                  <span>{asset.assetName} - ${asset.value.toFixed(2)}</span>
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeletePortfolio(portfolio.id);
-                    }}
+                    onClick={() => handleDeleteAsset(asset.id)}
                     className="bg-red-500 text-white p-1 rounded hover:bg-red-700"
                   >
                     Delete
                   </button>
                 </div>
-
-                {/* Expanded portfolio content */}
-                {expandedPortfolioId === portfolio.id && (
-                  <div className="p-4 bg-gray-50 rounded">
-                    <h3 className="text-lg font-semibold mb-2">Assets:</h3>
-                    {assets.filter((asset) => asset.portfolioId === portfolio.id).map((asset) => (
-                      <div key={asset.id} className="flex justify-between items-center p-2 border-b">
-                        <span>{asset.assetName} - ${asset.value.toFixed(2)}</span>
-                        <button
-                          onClick={() => handleDeleteAsset(asset.id)}
-                          className="bg-red-500 text-white p-1 rounded hover:bg-red-700"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </li>
-            ))
-          ) : (
-            <p>No portfolios available.</p>
+              ))}
+            </div>
           )}
-        </ul>
+        </li>
+      ))
+    ) : (
+      <p>No portfolios available.</p>
+    )}
+  </ul>
 
-        <input
-          type="text"
-          placeholder="New Portfolio Name"
-          value={newPortfolioName}
-          onChange={(e) => setNewPortfolioName(e.target.value)}
-          className="p-2 mb-2 w-full border rounded text-black"
-        />
-        <button onClick={handleAddPortfolio} className="bg-blue-500 text-white p-2 rounded w-full">
-          Create Portfolio
-        </button>
-      </div>
+  <input
+    type="text"
+    placeholder="New Portfolio Name"
+    value={newPortfolioName}
+    onChange={(e) => setNewPortfolioName(e.target.value)}
+    className="p-1 mb-2 w-full border rounded text-black"
+  />
+  <button onClick={handleAddPortfolio} className="bg-blue-500 text-white p-2 rounded w-full">
+    Create Portfolio
+  </button>
+</div>
+      
 
       {/* Add Manual Asset Section */}
-      <div className="mb-8 bg-gray-100 p-4 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold mb-4 text-center text-primary-text">Add Manual Asset</h2>
+      <div className="mb-6 bg-gray-100 p-4 rounded-lg shadow-sm text-sm w-full bg-red-200  sm:w-full sm:bg-yellow-200 md:w-full md:bg-pink-300  lg:bg-purple-300 lg:w-1/3 lg:mx-auto">
+        <h2 className="text-xl font-bold mb-3 text-center">Add Manual Asset</h2>
         <div>
           <input
             type="text"
             placeholder="Manual Asset Name"
             value={manualAssetName}
             onChange={(e) => setManualAssetName(e.target.value)}
-            className="p-2 mb-2 w-full border rounded text-black"
+            className="p-1 mb-2 w-full border rounded text-black"
           />
           <input
             type="number"
             placeholder="Manual Asset Value"
             value={manualAssetValue}
             onChange={(e) => setManualAssetValue(e.target.value)}
-            className="p-2 mb-2 w-full border rounded text-black"
+            className="p-1 mb-2 w-full border rounded text-black"
           />
           <button onClick={handleAddManualAsset} className="bg-green-500 text-white p-2 rounded mt-2 w-full">
             Add Manual Asset
@@ -303,27 +304,27 @@ const PortfolioManagement = () => {
       </div>
 
       {/* Add Real-Time Asset Section */}
-      <div className="mb-8 bg-gray-100 p-4 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold mb-4 text-center text-primary-text">Add Your Cryptocurrency and Stock</h2>
+      <div className="mb-6 bg-gray-100 p-4 rounded-lg shadow-sm text-sm w-full bg-red-200  sm:w-full sm:bg-yellow-200 md:w-full md:bg-pink-300  lg:bg-purple-300 lg:w-1/3 lg:mx-auto">
+        <h2 className="text-xl font-bold mb-3 text-center">Add Your Cryptocurrency and Stock</h2>
         <div>
           <input
             type="text"
             placeholder="Real-Time Asset Name"
             value={realTimeAssetName}
             onChange={(e) => setRealTimeAssetName(e.target.value)}
-            className="p-2 mb-2 w-full border rounded text-black"
+            className="p-1 mb-2 w-full border rounded text-black"
           />
           <input
             type="text"
             placeholder="Asset Symbol (e.g., AAPL)"
             value={realTimeAssetSymbol}
             onChange={(e) => setRealTimeAssetSymbol(e.target.value)}
-            className="p-2 mb-2 w-full border rounded text-black"
+            className="p-1 mb-2 w-full border rounded text-black"
           />
           <select
             value={realTimeAssetType}
             onChange={(e) => setRealTimeAssetType(e.target.value)}
-            className="p-2 mb-2 w-full border rounded text-black"
+            className="p-1 mb-2 w-full border rounded text-black"
           >
             <option value="STOCK">Stock</option>
             <option value="CRYPTO">Crypto</option>
@@ -335,9 +336,9 @@ const PortfolioManagement = () => {
       </div>
 
       {/* Add Debt Section */}
-      <div className="mb-8 bg-gray-100 p-4 rounded-lg shadow-md">
+      <div className="mb-6 bg-gray-100 p-4 rounded-lg shadow-sm text-sm w-full bg-red-200  sm:w-full sm:bg-yellow-200 md:w-full md:bg-pink-300  lg:bg-purple-300 lg:w-1/3 lg:mx-auto">
         <div
-          className="cursor-pointer p-4 bg-gray-200 rounded text-primary-text flex justify-between"
+          className="cursor-pointer p-3 bg-gray-200 rounded text-primary-text flex justify-between"
           onClick={() => setExpandedDebt(!expandedDebt)}
         >
           <span className="font-bold">Manage Debts {expandedDebt ? '▲' : '▼'}</span>
@@ -351,7 +352,7 @@ const PortfolioManagement = () => {
           <div className="mt-4">
             {debts.length > 0 ? (
               debts.map((debt) => (
-                <div key={debt.id} className="flex justify-between items-center p-2 border-b bg-white rounded">
+                <div key={debt.id} className="flex justify-between items-center p-2 border-b bg-white rounded-sm">
                   <span>
                     {debt.debtName} - ${debt.amount.toFixed(2)}
                   </span>
@@ -367,14 +368,14 @@ const PortfolioManagement = () => {
                 placeholder="Debt Name"
                 value={debtName}
                 onChange={(e) => setDebtName(e.target.value)}
-                className="p-2 mb-2 w-full border rounded text-black"
+                className="p-1 mb-2 w-full border rounded text-black"
               />
               <input
                 type="number"
                 placeholder="Debt Value"
                 value={debtValue}
                 onChange={(e) => setDebtValue(e.target.value)}
-                className="p-2 mb-2 w-full border rounded text-black"
+                className="p-1 mb-2 w-full border rounded text-black"
               />
               <button onClick={handleAddDebt} className="bg-red-500 text-white p-2 rounded mt-2 w-full">
                 Add Debt
@@ -388,6 +389,7 @@ const PortfolioManagement = () => {
 };
 
 export default PortfolioManagement;
+
 
 
 
