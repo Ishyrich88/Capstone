@@ -61,5 +61,18 @@ export const addAsset = async (asset) => {
     }
 };
 
+// Delete an asset by ID
+export const deleteAsset = async (assetId) => {
+    try {
+        const response = await axios.delete(`${BASE_URL}/assets/${assetId}`);
+        console.log(`Asset with ID ${assetId} deleted successfully.`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error deleting asset with ID ${assetId}:`, error);
+        throw error;
+    }
+};
+
+
 
 

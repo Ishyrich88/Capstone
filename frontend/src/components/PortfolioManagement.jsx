@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { fetchPortfoliosByUserId, addPortfolio, deletePortfolio } from '../services/portfolioService';
-import { addAsset, fetchAssets } from '../services/assetService';
+import { addAsset, fetchAssets, deleteAsset } from '../services/assetService'; // Import deleteAsset function
 import { addDebt, fetchDebts } from '../services/debtService';
 
 const PortfolioManagement = () => {
-  // State variables
   const [portfolios, setPortfolios] = useState([]);
   const [newPortfolioName, setNewPortfolioName] = useState('');
   const [selectedPortfolio, setSelectedPortfolio] = useState(null);
@@ -33,7 +32,6 @@ const PortfolioManagement = () => {
     try {
       const response = await api.get('/auth/userinfo');
       setUserId(response.data.id);
-      console.log('User ID fetched successfully:', response.data.id);
     } catch (error) {
       console.error('Error fetching user information:', error);
     }
@@ -48,7 +46,6 @@ const PortfolioManagement = () => {
     }
   }, [userId]);
 
-  // Fetch user ID on component mount
   useEffect(() => {
     fetchUserId();
   }, []);
@@ -58,7 +55,6 @@ const PortfolioManagement = () => {
     try {
       const data = await fetchPortfoliosByUserId(userId);
       setPortfolios(data);
-      console.log('Portfolios loaded successfully:', data);
     } catch (error) {
       console.error('Error fetching portfolios:', error);
     }
@@ -69,7 +65,6 @@ const PortfolioManagement = () => {
     try {
       const data = await fetchAssets(userId);
       setAssets(data);
-      console.log('Assets loaded successfully:', data);
     } catch (error) {
       console.error('Error fetching assets:', error);
     }
@@ -80,7 +75,6 @@ const PortfolioManagement = () => {
     try {
       const data = await fetchDebts(userId);
       setDebts(data);
-      console.log('Debts loaded successfully:', data);
     } catch (error) {
       console.error('Error fetching debts:', error);
     }
@@ -99,7 +93,6 @@ const PortfolioManagement = () => {
       const addedPortfolio = await addPortfolio(newPortfolio);
       setPortfolios([...portfolios, addedPortfolio]);
       setNewPortfolioName('');
-      console.log('New portfolio added successfully:', addedPortfolio);
     } catch (error) {
       console.error('Error adding portfolio:', error);
     }
@@ -109,6 +102,18 @@ const PortfolioManagement = () => {
   const handleSelectPortfolio = (portfolio) => {
     setSelectedPortfolio(portfolio);
     setExpandedPortfolioId(expandedPortfolioId === portfolio.id ? null : portfolio.id);
+  };
+
+  // Handle deleting an asset
+  const handleDeleteAsset = async (assetId) => {
+    if (!window.confirm('Are you sure you want to delete this asset?')) return;
+
+    try {
+      await deleteAsset(assetId); // Call deleteAsset function from assetService
+      loadAssets(userId); // Reload assets after deletion
+    } catch (error) {
+      console.error('Error deleting asset:', error);
+    }
   };
 
   // Handle adding a new manual asset to the selected portfolio
@@ -132,7 +137,7 @@ const PortfolioManagement = () => {
       alert('Manual asset added successfully');
       setManualAssetName('');
       setManualAssetValue('');
-      loadAssets(userId); // Reload assets after adding
+      loadAssets(userId);
     } catch (error) {
       console.error('Error adding manual asset:', error);
     }
@@ -160,7 +165,7 @@ const PortfolioManagement = () => {
       alert('Real-time asset added successfully');
       setRealTimeAssetName('');
       setRealTimeAssetSymbol('');
-      loadAssets(userId); // Reload assets after adding
+      loadAssets(userId);
     } catch (error) {
       console.error('Error adding real-time asset:', error);
     }
@@ -183,7 +188,7 @@ const PortfolioManagement = () => {
       alert('Debt added successfully');
       setDebtName('');
       setDebtValue('');
-      loadDebts(userId); // Reload debts after adding
+      loadDebts(userId);
     } catch (error) {
       console.error('Error adding debt:', error);
     }
@@ -208,13 +213,12 @@ const PortfolioManagement = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 bg-body-bg text-primary-text font-roboto">
-      <h1 className="text-3xl font-bold mb-4 text-center">Portfolio Management</h1>
+    <div className="container mx-auto p-4 bg-body-bg text-primary-text font-roboto text-sm">
+      <h1 className="text-2xl font-bold mb-4 text-center">Portfolio Management</h1>
 
       {/* Portfolio Section */}
-      <div className="mb-8 border rounded p-4 bg-gray-100">
-        <h2 className="text-2xl font-bold text-center mb-4">Your Portfolios</h2>
-        {/* Portfolio List */}
+      <div className="mb-4 border rounded p-4 bg-gray-100">
+        <h2 className="text-xl font-bold text-center mb-4">Your Portfolios</h2>
         <ul className="mb-4">
           {portfolios.length > 0 ? (
             portfolios.map((portfolio) => (
@@ -289,8 +293,8 @@ const PortfolioManagement = () => {
       </div>
 
       {/* Add Manual Asset Section */}
-      <div className="mb-8 border rounded p-4 bg-gray-100">
-        <h2 className="text-2xl font-bold text-center mb-4">Add Manual Asset</h2>
+      <div className="mb-4 border rounded p-4 bg-gray-100">
+        <h2 className="text-xl font-bold text-center mb-4">Add Manual Asset</h2>
         <div className="flex flex-col items-center">
           <input
             type="text"
@@ -313,8 +317,8 @@ const PortfolioManagement = () => {
       </div>
 
       {/* Add Real-Time Asset Section */}
-      <div className="mb-8 border rounded p-4 bg-gray-100">
-        <h2 className="text-2xl font-bold text-center mb-4">Add Your Cryptocurrency and Stock</h2>
+      <div className="mb-4 border rounded p-4 bg-gray-100">
+        <h2 className="text-xl font-bold text-center mb-4">Add Your Cryptocurrency and Stock</h2>
         <div className="flex flex-col items-center">
           <input
             type="text"
@@ -345,8 +349,8 @@ const PortfolioManagement = () => {
       </div>
 
       {/* Add Debt Section */}
-      <div className="mb-8 border rounded p-4 bg-gray-100">
-        <h2 className="text-2xl font-bold text-center mb-4">Manage Debts</h2>
+      <div className="mb-4 border rounded p-4 bg-gray-100">
+        <h2 className="text-xl font-bold text-center mb-4">Manage Debts</h2>
         <h3 className="text-lg font-semibold text-center">Add New Debt</h3>
         <div className="flex flex-col items-center">
           <input
@@ -398,6 +402,7 @@ const PortfolioManagement = () => {
 };
 
 export default PortfolioManagement;
+
 
 
 
