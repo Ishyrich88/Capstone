@@ -15,24 +15,54 @@ public class PortfolioController {
     @Autowired
     private PortfolioService portfolioService;
 
-    // Get portfolios by user ID
-    @GetMapping("/{userId}")
-    public List<Portfolio> getPortfoliosByUser(@PathVariable Long userId) {
-        return portfolioService.getPortfoliosByUser(userId);
+    // Get all portfolios by user ID
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Portfolio>> getPortfoliosByUser(@PathVariable Long userId) {
+        try {
+            List<Portfolio> portfolios = portfolioService.getPortfoliosByUser(userId);
+            if (portfolios.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(portfolios);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // Get a specific portfolio by its ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Portfolio> getPortfolioById(@PathVariable Long id) {
+        try {
+            Portfolio portfolio = portfolioService.getPortfolioById(id);
+            if (portfolio == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(portfolio);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     // Create a new portfolio
     @PostMapping
     public ResponseEntity<Portfolio> createPortfolio(@RequestBody Portfolio portfolio) {
-        Portfolio newPortfolio = portfolioService.createPortfolio(portfolio.getUserId(), portfolio.getName());
-        return ResponseEntity.ok(newPortfolio);
+        try {
+            Portfolio newPortfolio = portfolioService.createPortfolio(portfolio.getUserId(), portfolio.getName());
+            return ResponseEntity.ok(newPortfolio);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     // Delete a portfolio by its ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePortfolio(@PathVariable Long id) {
-        portfolioService.deletePortfolio(id);
-        return ResponseEntity.noContent().build();
+        try {
+            portfolioService.deletePortfolio(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }
 

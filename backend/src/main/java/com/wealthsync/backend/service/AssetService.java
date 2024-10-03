@@ -40,6 +40,12 @@ public class AssetService {
         return assetRepository.findByUserId(userId);
     }
 
+    // Get assets by portfolio ID
+    public List<Asset> getAssetsByPortfolioId(Long portfolioId) {
+        logger.info("Fetching assets for portfolio ID: {}", portfolioId);
+        return assetRepository.findByPortfolioId(portfolioId);
+    }
+
     // Get asset by ID
     public Optional<Asset> getAssetById(Long id) {
         logger.info("Fetching asset with ID: {}", id);
@@ -81,6 +87,7 @@ public class AssetService {
         assetToUpdate.setValue(asset.getValue());
         assetToUpdate.setSymbol(asset.getSymbol());
         assetToUpdate.setIsRealTimeTracked(asset.getIsRealTimeTracked());
+        assetToUpdate.setPortfolioId(asset.getPortfolioId()); // Ensure portfolio ID is updated
 
         // Update lastUpdated date only if it's a real-time tracked asset
         if (asset.getIsRealTimeTracked()) {
@@ -156,6 +163,7 @@ public class AssetService {
         return price;
     }
 }
+
 
 
 

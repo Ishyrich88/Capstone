@@ -33,6 +33,18 @@ public class PortfolioService {
     }
 
     /**
+     * Retrieve a specific portfolio by its ID.
+     *
+     * @param portfolioId the ID of the portfolio
+     * @return the Portfolio object if found
+     */
+    public Portfolio getPortfolioById(Long portfolioId) {
+        logger.info("Fetching portfolio with ID: {}", portfolioId);
+        validatePortfolioId(portfolioId);
+        return portfolioRepository.findById(portfolioId).orElse(null);
+    }
+
+    /**
      * Create a new portfolio for a user.
      *
      * @param userId the ID of the user
@@ -80,6 +92,17 @@ public class PortfolioService {
     }
 
     /**
+     * Validate portfolio ID to ensure it's not null or negative.
+     *
+     * @param portfolioId the ID of the portfolio
+     */
+    private void validatePortfolioId(Long portfolioId) {
+        if (portfolioId == null || portfolioId <= 0) {
+            throw new IllegalArgumentException("Portfolio ID must be a positive number.");
+        }
+    }
+
+    /**
      * Validate portfolio name to ensure it's not null or empty.
      *
      * @param name the name of the portfolio
@@ -90,5 +113,7 @@ public class PortfolioService {
         }
     }
 }
+
+
 
 

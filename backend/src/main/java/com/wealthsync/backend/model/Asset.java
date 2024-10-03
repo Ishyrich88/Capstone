@@ -17,6 +17,9 @@ public class Asset {
     @Column("user_id")
     private Long userId;  // Reference to the User who owns this asset
 
+    @Column("portfolio_id")
+    private Long portfolioId;  // Reference to the Portfolio that this asset belongs to
+
     @Column("asset_type")
     private AssetType assetType;  // Enum for type of asset (CRYPTO, STOCK, MANUAL)
 
@@ -39,8 +42,9 @@ public class Asset {
     public Asset() {}
 
     // Constructor for real-time tracked assets (CRYPTO, STOCK)
-    public Asset(Long userId, AssetType assetType, String assetName, String symbol) {
+    public Asset(Long userId, Long portfolioId, AssetType assetType, String assetName, String symbol) {
         this.userId = userId;
+        this.portfolioId = portfolioId;
         this.assetType = assetType;
         this.assetName = assetName;
         this.symbol = symbol;  // Symbol required for real-time tracked assets
@@ -50,8 +54,9 @@ public class Asset {
     }
 
     // Constructor for manual assets
-    public Asset(Long userId, AssetType assetType, String assetName, BigDecimal value) {
+    public Asset(Long userId, Long portfolioId, AssetType assetType, String assetName, BigDecimal value) {
         this.userId = userId;
+        this.portfolioId = portfolioId;
         this.assetType = assetType;
         this.assetName = assetName;
         this.value = value;
@@ -75,6 +80,14 @@ public class Asset {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public Long getPortfolioId() {
+        return portfolioId;
+    }
+
+    public void setPortfolioId(Long portfolioId) {
+        this.portfolioId = portfolioId;
     }
 
     public AssetType getAssetType() {
@@ -133,6 +146,7 @@ public class Asset {
         return "Asset{" +
                 "id=" + id +
                 ", userId=" + userId +
+                ", portfolioId=" + portfolioId +
                 ", assetType=" + assetType +
                 ", assetName='" + assetName + '\'' +
                 ", symbol='" + symbol + '\'' +
@@ -142,6 +156,7 @@ public class Asset {
                 '}';
     }
 }
+
 
 
 

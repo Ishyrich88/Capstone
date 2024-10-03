@@ -46,6 +46,23 @@ public class AssetController {
         }
     }
 
+    // Get assets by portfolio ID
+    @GetMapping("/portfolio/{portfolioId}")
+    public ResponseEntity<List<Asset>> getAssetsByPortfolioId(@PathVariable Long portfolioId) {
+        try {
+            logger.info("Fetching assets for portfolio ID: {}", portfolioId);
+            List<Asset> assets = assetService.getAssetsByPortfolioId(portfolioId);
+            if (assets.isEmpty()) {
+                logger.info("No assets found for portfolio ID: {}", portfolioId);
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(assets);
+        } catch (Exception e) {
+            logger.error("Error fetching assets for portfolio ID: {}: {}", portfolioId, e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     // Add a new asset
     @PostMapping
     public ResponseEntity<Asset> addAsset(@RequestBody Asset asset) {
@@ -118,7 +135,7 @@ public class AssetController {
         }
     }
 
-    // NEW ENDPOINT: Fetch real-time price of a specific cryptocurrency
+    // Fetch real-time price of a specific cryptocurrency
     @GetMapping("/crypto/price/{symbol}")
     public ResponseEntity<BigDecimal> getCryptoPrice(@PathVariable String symbol) {
         try {
@@ -135,7 +152,7 @@ public class AssetController {
         }
     }
 
-    // NEW ENDPOINT: Fetch real-time price of a specific stock
+    // Fetch real-time price of a specific stock
     @GetMapping("/stock/price/{symbol}")
     public ResponseEntity<BigDecimal> getStockPrice(@PathVariable String symbol) {
         try {
@@ -190,6 +207,9 @@ public class AssetController {
         return price;
     }
 }
+
+
+
 
 
 
