@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { fetchPortfoliosByUserId, addPortfolio, deletePortfolio } from '../services/portfolioService';
-import { addAsset, fetchAssets, deleteAsset } from '../services/assetService'; // Import deleteAsset function
-import { addDebt, fetchDebts } from '../services/debtService';
+import { addAsset, fetchAssets, deleteAsset } from '../services/assetService';
+import { addDebt, fetchDebts } from '../services/debtService'; // Import debt-related functions
 
 const PortfolioManagement = () => {
   const [portfolios, setPortfolios] = useState([]);
@@ -11,8 +11,8 @@ const PortfolioManagement = () => {
   const [expandedPortfolioId, setExpandedPortfolioId] = useState(null); // Track the expanded portfolio
   const [userId, setUserId] = useState(null);
   const [assets, setAssets] = useState([]);
-  const [debts, setDebts] = useState([]);
-  const [showDebt, setShowDebt] = useState(false); // Toggle debt list
+  const [debts, setDebts] = useState([]); // Track debts for the user
+  const [expandedDebt, setExpandedDebt] = useState(false); // Track if debt section is expanded
 
   // State for manual asset entry
   const [manualAssetName, setManualAssetName] = useState('');
@@ -46,6 +46,7 @@ const PortfolioManagement = () => {
     }
   }, [userId]);
 
+  // Fetch user ID on component mount
   useEffect(() => {
     fetchUserId();
   }, []);
@@ -104,18 +105,6 @@ const PortfolioManagement = () => {
     setExpandedPortfolioId(expandedPortfolioId === portfolio.id ? null : portfolio.id);
   };
 
-  // Handle deleting an asset
-  const handleDeleteAsset = async (assetId) => {
-    if (!window.confirm('Are you sure you want to delete this asset?')) return;
-
-    try {
-      await deleteAsset(assetId); // Call deleteAsset function from assetService
-      loadAssets(userId); // Reload assets after deletion
-    } catch (error) {
-      console.error('Error deleting asset:', error);
-    }
-  };
-
   // Handle adding a new manual asset to the selected portfolio
   const handleAddManualAsset = async () => {
     if (!selectedPortfolio) return alert('Please select a portfolio.');
@@ -126,7 +115,7 @@ const PortfolioManagement = () => {
     const newAsset = {
       userId,
       portfolioId: selectedPortfolio.id,
-      assetType: 'MANUAL',
+      assetType: 'MANUAL', // Set asset type as MANUAL
       assetName: manualAssetName.trim(),
       value: parseFloat(manualAssetValue),
       isRealTimeTracked: false,
@@ -137,7 +126,7 @@ const PortfolioManagement = () => {
       alert('Manual asset added successfully');
       setManualAssetName('');
       setManualAssetValue('');
-      loadAssets(userId);
+      loadAssets(userId); // Reload assets after adding
     } catch (error) {
       console.error('Error adding manual asset:', error);
     }
@@ -153,7 +142,7 @@ const PortfolioManagement = () => {
     const newAsset = {
       userId,
       portfolioId: selectedPortfolio.id,
-      assetType: realTimeAssetType,
+      assetType: realTimeAssetType, // Set asset type dynamically (STOCK or CRYPTO)
       assetName: realTimeAssetName.trim(),
       symbol: realTimeAssetSymbol.trim(),
       isRealTimeTracked: true,
@@ -165,7 +154,7 @@ const PortfolioManagement = () => {
       alert('Real-time asset added successfully');
       setRealTimeAssetName('');
       setRealTimeAssetSymbol('');
-      loadAssets(userId);
+      loadAssets(userId); // Reload assets after adding
     } catch (error) {
       console.error('Error adding real-time asset:', error);
     }
@@ -188,15 +177,10 @@ const PortfolioManagement = () => {
       alert('Debt added successfully');
       setDebtName('');
       setDebtValue('');
-      loadDebts(userId);
+      loadDebts(userId); // Reload debts after adding
     } catch (error) {
       console.error('Error adding debt:', error);
     }
-  };
-
-  // Toggle debt list visibility
-  const handleToggleDebtList = () => {
-    setShowDebt(!showDebt);
   };
 
   // Handle deleting a portfolio
@@ -212,30 +196,41 @@ const PortfolioManagement = () => {
     }
   };
 
-  return (
-    <div className="container mx-auto p-4 bg-body-bg text-primary-text font-roboto text-sm">
-      <h1 className="text-2xl font-bold mb-4 text-center">Portfolio Management</h1>
+  // Handle deleting an asset from a portfolio
+  const handleDeleteAsset = async (assetId) => {
+    if (!selectedPortfolio) return alert('Please select a portfolio.');
+    if (!window.confirm('Are you sure you want to delete this asset?')) return;
 
-      {/* Portfolio Section */}
-      <div className="mb-4 border rounded p-4 bg-gray-100">
-        <h2 className="text-xl font-bold text-center mb-4">Your Portfolios</h2>
+    try {
+      await deleteAsset(assetId);
+      loadAssets(userId); // Reload assets after deleting
+      alert('Asset deleted successfully');
+    } catch (error) {
+      console.error('Error deleting asset:', error);
+    }
+  };
+
+  return (
+    <div className="container mx-auto p-4 bg-body-bg">
+      <h1 className="text-3xl font-bold mb-4 text-center text-primary-text">Portfolio Management</h1>
+
+      {/* Portfolio Selection and Creation */}
+      <div className="mb-8 bg-gray-100 p-4 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold mb-4 text-center text-primary-text">Your Portfolios</h2>
         <ul className="mb-4">
           {portfolios.length > 0 ? (
             portfolios.map((portfolio) => (
-              <li key={portfolio.id} className="mb-2 border rounded p-2">
+              <li key={portfolio.id} className="mb-2 border-b">
                 <div
-                  className={`flex justify-between items-center cursor-pointer bg-gray-200 hover:bg-gray-300 p-2 rounded ${
-                    expandedPortfolioId === portfolio.id ? 'bg-accent' : ''
+                  className={`flex justify-between items-center cursor-pointer p-2 bg-gray-200 hover:bg-gray-300 rounded ${
+                    expandedPortfolioId === portfolio.id ? 'bg-accent text-white' : ''
                   }`}
                   onClick={() => handleSelectPortfolio(portfolio)}
                 >
-                  <span className="font-medium">
-                    {portfolio.name} - Total Value: $
-                    {assets
-                      .filter((asset) => asset.portfolioId === portfolio.id)
-                      .reduce((acc, asset) => acc + asset.value, 0)
-                      .toFixed(2)}
+                  <span>
+                    {portfolio.name} {expandedPortfolioId === portfolio.id ? '▲' : '▼'}
                   </span>
+                  <span>Total: ${assets.filter((asset) => asset.portfolioId === portfolio.id).reduce((total, asset) => total + asset.value, 0).toFixed(2)}</span>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -246,28 +241,22 @@ const PortfolioManagement = () => {
                     Delete
                   </button>
                 </div>
-                {/* Collapsible portfolio content */}
+
+                {/* Expanded portfolio content */}
                 {expandedPortfolioId === portfolio.id && (
-                  <div className="p-4 bg-gray-50">
+                  <div className="p-4 bg-gray-50 rounded">
                     <h3 className="text-lg font-semibold mb-2">Assets:</h3>
-                    {assets
-                      .filter((asset) => asset.portfolioId === portfolio.id)
-                      .map((asset) => (
-                        <div key={asset.id} className="flex justify-between items-center p-2 border-b">
-                          <span>
-                            {asset.assetName} - ${asset.value.toFixed(2)}
-                          </span>
-                          <button
-                            onClick={() => handleDeleteAsset(asset.id)}
-                            className="bg-red-500 text-white p-1 rounded hover:bg-red-700"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      ))}
-                    {assets.filter((asset) => asset.portfolioId === portfolio.id).length === 0 && (
-                      <p>No assets available in this portfolio.</p>
-                    )}
+                    {assets.filter((asset) => asset.portfolioId === portfolio.id).map((asset) => (
+                      <div key={asset.id} className="flex justify-between items-center p-2 border-b">
+                        <span>{asset.assetName} - ${asset.value.toFixed(2)}</span>
+                        <button
+                          onClick={() => handleDeleteAsset(asset.id)}
+                          className="bg-red-500 text-white p-1 rounded hover:bg-red-700"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    ))}
                   </div>
                 )}
               </li>
@@ -277,25 +266,22 @@ const PortfolioManagement = () => {
           )}
         </ul>
 
-        {/* New Portfolio Input */}
-        <div className="flex flex-col items-center">
-          <input
-            type="text"
-            placeholder="New Portfolio Name"
-            value={newPortfolioName}
-            onChange={(e) => setNewPortfolioName(e.target.value)}
-            className="p-2 mb-2 w-full border rounded text-black"
-          />
-          <button onClick={handleAddPortfolio} className="bg-blue-500 text-white p-2 rounded w-full">
-            Create Portfolio
-          </button>
-        </div>
+        <input
+          type="text"
+          placeholder="New Portfolio Name"
+          value={newPortfolioName}
+          onChange={(e) => setNewPortfolioName(e.target.value)}
+          className="p-2 mb-2 w-full border rounded text-black"
+        />
+        <button onClick={handleAddPortfolio} className="bg-blue-500 text-white p-2 rounded w-full">
+          Create Portfolio
+        </button>
       </div>
 
       {/* Add Manual Asset Section */}
-      <div className="mb-4 border rounded p-4 bg-gray-100">
-        <h2 className="text-xl font-bold text-center mb-4">Add Manual Asset</h2>
-        <div className="flex flex-col items-center">
+      <div className="mb-8 bg-gray-100 p-4 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold mb-4 text-center text-primary-text">Add Manual Asset</h2>
+        <div>
           <input
             type="text"
             placeholder="Manual Asset Name"
@@ -310,16 +296,16 @@ const PortfolioManagement = () => {
             onChange={(e) => setManualAssetValue(e.target.value)}
             className="p-2 mb-2 w-full border rounded text-black"
           />
-          <button onClick={handleAddManualAsset} className="bg-green-500 text-white p-2 rounded w-full">
+          <button onClick={handleAddManualAsset} className="bg-green-500 text-white p-2 rounded mt-2 w-full">
             Add Manual Asset
           </button>
         </div>
       </div>
 
       {/* Add Real-Time Asset Section */}
-      <div className="mb-4 border rounded p-4 bg-gray-100">
-        <h2 className="text-xl font-bold text-center mb-4">Add Your Cryptocurrency and Stock</h2>
-        <div className="flex flex-col items-center">
+      <div className="mb-8 bg-gray-100 p-4 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold mb-4 text-center text-primary-text">Add Your Cryptocurrency and Stock</h2>
+        <div>
           <input
             type="text"
             placeholder="Real-Time Asset Name"
@@ -342,66 +328,69 @@ const PortfolioManagement = () => {
             <option value="STOCK">Stock</option>
             <option value="CRYPTO">Crypto</option>
           </select>
-          <button onClick={handleAddRealTimeAsset} className="bg-green-500 text-white p-2 rounded w-full">
+          <button onClick={handleAddRealTimeAsset} className="bg-green-500 text-white p-2 rounded mt-2 w-full">
             Add Real-Time Asset
           </button>
         </div>
       </div>
 
       {/* Add Debt Section */}
-      <div className="mb-4 border rounded p-4 bg-gray-100">
-        <h2 className="text-xl font-bold text-center mb-4">Manage Debts</h2>
-        <h3 className="text-lg font-semibold text-center">Add New Debt</h3>
-        <div className="flex flex-col items-center">
-          <input
-            type="text"
-            placeholder="Debt Name"
-            value={debtName}
-            onChange={(e) => setDebtName(e.target.value)}
-            className="p-2 mb-2 w-full border rounded text-black"
-          />
-          <input
-            type="number"
-            placeholder="Debt Value"
-            value={debtValue}
-            onChange={(e) => setDebtValue(e.target.value)}
-            className="p-2 mb-2 w-full border rounded text-black"
-          />
-          <button onClick={handleAddDebt} className="bg-red-500 text-white p-2 rounded w-full">
-            Add Debt
-          </button>
+      <div className="mb-8 bg-gray-100 p-4 rounded-lg shadow-md">
+        <div
+          className="cursor-pointer p-4 bg-gray-200 rounded text-primary-text flex justify-between"
+          onClick={() => setExpandedDebt(!expandedDebt)}
+        >
+          <span className="font-bold">Manage Debts {expandedDebt ? '▲' : '▼'}</span>
+          <span>
+            Total Debt: $
+            {debts.reduce((total, debt) => total + debt.amount, 0).toFixed(2)}
+          </span>
         </div>
 
-        {/* Collapsible Debts List */}
-        <div className="mt-4 border rounded p-2">
-          <div
-            className="cursor-pointer bg-gray-200 hover:bg-gray-300 p-2 rounded"
-            onClick={handleToggleDebtList}
-          >
-            <h3 className="text-lg font-semibold">Your Debts {showDebt ? '▲' : '▼'} - Total Value: ${debts.reduce((acc, debt) => acc + debt.amount, 0).toFixed(2)}</h3>
-          </div>
-          {showDebt && (
-            <div className="p-4 bg-gray-50">
-              {debts.length > 0 ? (
-                debts.map((debt) => (
-                  <div key={debt.id} className="flex justify-between items-center p-2 border-b">
-                    <span>
-                      {debt.debtName} - ${debt.amount.toFixed(2)}
-                    </span>
-                  </div>
-                ))
-              ) : (
-                <p>No debts available.</p>
-              )}
+        {expandedDebt && (
+          <div className="mt-4">
+            {debts.length > 0 ? (
+              debts.map((debt) => (
+                <div key={debt.id} className="flex justify-between items-center p-2 border-b bg-white rounded">
+                  <span>
+                    {debt.debtName} - ${debt.amount.toFixed(2)}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <p>No debts available.</p>
+            )}
+            <div className="mt-4">
+              <h3 className="text-lg font-semibold text-primary-text">Add New Debt</h3>
+              <input
+                type="text"
+                placeholder="Debt Name"
+                value={debtName}
+                onChange={(e) => setDebtName(e.target.value)}
+                className="p-2 mb-2 w-full border rounded text-black"
+              />
+              <input
+                type="number"
+                placeholder="Debt Value"
+                value={debtValue}
+                onChange={(e) => setDebtValue(e.target.value)}
+                className="p-2 mb-2 w-full border rounded text-black"
+              />
+              <button onClick={handleAddDebt} className="bg-red-500 text-white p-2 rounded mt-2 w-full">
+                Add Debt
+              </button>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
 export default PortfolioManagement;
+
+
+
 
 
 
