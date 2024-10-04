@@ -46,8 +46,8 @@ public class UserService {
         newUser.setLastName(lastName);
         newUser.setEmail(email);
 
-        // Save password with {noop} prefix for testing without security dependencies
-        newUser.setPassword("{noop}" + password);
+        // Save the password as plain text (no prefix or encoding)
+        newUser.setPassword(password);
 
         // Save the new user to the database using the repository
         User savedUser = userRepository.save(newUser);
@@ -67,6 +67,7 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 }
+
 
 
 

@@ -61,25 +61,28 @@ const PortfolioManagement = () => {
     }
   };
 
-  // Fetch all assets for the user
-  const loadAssets = async (userId) => {
-    try {
-      const data = await fetchAssets(userId);
-      setAssets(data);
-    } catch (error) {
-      console.error('Error fetching assets:', error);
-    }
-  };
+  // Update loadAssets function
+const loadAssets = async (userId) => {
+  try {
+    const data = await fetchAssets(userId);
+    setAssets(Array.isArray(data) ? data : []); // Ensure data is an array or set as an empty array
+  } catch (error) {
+    console.error('Error fetching assets:', error);
+    setAssets([]); // Set to an empty array in case of an error
+  }
+};
 
-  // Fetch all debts for the user
-  const loadDebts = async (userId) => {
-    try {
-      const data = await fetchDebts(userId);
-      setDebts(data);
-    } catch (error) {
-      console.error('Error fetching debts:', error);
-    }
-  };
+// Update loadDebts function
+const loadDebts = async (userId) => {
+  try {
+    const data = await fetchDebts(userId);
+    setDebts(Array.isArray(data) ? data : []); // Ensure data is an array or set as an empty array
+  } catch (error) {
+    console.error('Error fetching debts:', error);
+    setDebts([]); // Set to an empty array in case of an error
+  }
+};
+
 
   // Handle adding a new portfolio
   const handleAddPortfolio = async () => {
