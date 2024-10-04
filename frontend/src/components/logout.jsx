@@ -8,7 +8,7 @@ const Logout = () => {
         console.log("Logging out...");
 
         // Remove JWT token from local storage
-        localStorage.removeItem('jwtToken');
+        localStorage.removeItem('token');
         console.log("JWT Token removed");
 
         // Optionally remove user-related information

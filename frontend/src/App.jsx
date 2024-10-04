@@ -8,7 +8,7 @@ import Register from './components/Register';
 import PortfolioManagement from './components/PortfolioManagement';
 import NavBar from './components/NavBar';
 import LandingPage from './components/LandingPage';
-import Logout from './components/Logout';
+import Logout from './components/logout';
 
 function App() {
     return (
