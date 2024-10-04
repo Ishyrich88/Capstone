@@ -33,7 +33,7 @@ const Register = () => {
     return (
         <div className="min-h-screen flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)' }}>
           <div className="container mx-auto p-8 w-full sm:w-full md:w-1/2 lg:w-1/3 xl:w-1/4 bg-opacity-70 rounded-lg shadow-md" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(10px)' }}>
-            <h1 className="text-3xl font-bold mb-6 text-center text-white">Sign Up</h1>
+            <h1 className="text-3xl font-bold mb-6 text-center text-white">Take a Step Toward Financial Freedom</h1>
             {error && <p className="text-red-500 text-center mb-4">{error}</p>}
             {success && <p className="text-green-500 text-center mb-4">{success}</p>}
             <form onSubmit={handleRegister} className="text-center">

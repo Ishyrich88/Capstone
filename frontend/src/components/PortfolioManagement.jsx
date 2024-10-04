@@ -316,31 +316,31 @@ const PortfolioManagement = () => {
   
       {/* Add Manual Asset Section */}
       <div className="mb-6 p-6 rounded-lg shadow-sm text-sm w-full sm:w-full md:w-full lg:w-1/3 lg:mx-auto bg-opacity-70" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(10px)' }}>
-        <h2 className="text-xl font-bold mb-3 text-center text-white">Add Manual Asset</h2>
+        <h2 className="text-xl font-bold mb-3 text-center text-white">Enter Your Investments</h2>
         <div>
           <input
             type="text"
-            placeholder="Manual Asset Name"
+            placeholder="Asset Name"
             value={manualAssetName}
             onChange={(e) => setManualAssetName(e.target.value)}
             className="p-3 mb-2 w-full border rounded text-black bg-white border-gray-500 font-semibold"
           />
           <input
             type="number"
-            placeholder="Manual Asset Value"
+            placeholder="Asset Value"
             value={manualAssetValue}
             onChange={(e) => setManualAssetValue(e.target.value)}
             className="p-3 mb-2 w-full border rounded text-black bg-white border-gray-500 font-semibold"
           />
           <button onClick={handleAddManualAsset} className="bg-light-blue-500 text-white font-bold p-3 rounded w-full hover:bg-blue-700 transition duration-200 ease-in-out">
-            Add Manual Asset
+            Enter Investments
           </button>
         </div>
       </div>
   
       {/* Add Real-Time Asset Section */}
       <div className="mb-6 p-6 rounded-lg shadow-sm text-sm w-full sm:w-full md:w-full lg:w-1/3 lg:mx-auto bg-opacity-70" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(10px)' }}>
-        <h2 className="text-xl font-bold mb-3 text-center text-white">Add Your Cryptocurrency and Stock</h2>
+        <h2 className="text-xl font-bold mb-3 text-center text-white">Enter Your Crypto & Stock</h2>
         <div>
           <input
             type="text"
@@ -365,7 +365,7 @@ const PortfolioManagement = () => {
             <option value="CRYPTO">Crypto</option>
           </select>
           <button onClick={handleAddRealTimeAsset} className="bg-light-blue-500 text-white font-bold p-3 rounded w-full hover:bg-blue-700 transition duration-200 ease-in-out">
-            Add Real-Time Asset
+            Enter Stock or Crypto
           </button>
         </div>
       </div>
