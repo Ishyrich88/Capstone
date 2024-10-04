@@ -30,12 +30,30 @@ const PortfolioManagement = () => {
   // Fetch user ID from backend
   const fetchUserId = async () => {
     try {
-      const response = await api.get('/auth/userinfo');
+      // Retrieve JWT token from local storage
+const jwtToken = localStorage.getItem('token');
+
+  
+      if (!jwtToken) {
+        console.error('JWT token not found in local storage');
+        return;
+      }
+  
+      // Make the API call with the Authorization header set
+      const response = await api.get('/auth/userinfo', {
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      });
+  
+      // Set the user ID state with the response data
       setUserId(response.data.id);
+      console.log('User ID fetched successfully:', response.data.id);
     } catch (error) {
       console.error('Error fetching user information:', error);
     }
   };
+  
 
   // Load portfolios, assets, and debts when userId changes
   useEffect(() => {
