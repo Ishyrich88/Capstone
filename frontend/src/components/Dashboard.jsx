@@ -97,55 +97,59 @@ const Dashboard = () => {
     };
 
     return (
-        <div className="dashboard container mx-auto p-4 bg-gray-100">
-            <h1 className="text-3xl font-bold mb-6 text-center">Dashboard</h1>
-            <button onClick={handlePortfolioNavigation} className="bg-blue-500 text-white p-2 rounded mb-4">
-                Manage Portfolios
-            </button>
-
-            {/* Net Worth Display */}
-            <div className="net-worth-display mb-6 p-4 bg-white rounded-lg shadow-md text-center">
-                <h2 className="text-xl font-semibold mb-2">Net Worth: ${netWorth.toFixed(2)}</h2>
-                <p>Total Assets: ${totalAssets.toFixed(2)}</p>
-                <p>Total Debts: ${totalDebts.toFixed(2)}</p>
+        <div className="mx-auto p-4 text-primary-text font-roboto text-sm w-full min-h-screen" style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)' }}>
+          <h1 className="text-3xl font-bold mb-6 text-center text-white">Dashboard</h1>
+      
+          <button onClick={handlePortfolioNavigation} className="bg-light-blue-500 text-white font-bold p-3 rounded mb-6 hover:bg-blue-700 transition duration-200 ease-in-out">
+            Manage Portfolios
+          </button>
+      
+          {/* Net Worth Display */}
+          <div className="net-worth-display mb-6 p-6 rounded-lg shadow-md text-center w-full sm:w-full md:w-full lg:w-1/3 lg:mx-auto" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(10px)' }}>
+            <h2 className="text-xl font-bold mb-2 text-white">Net Worth: ${netWorth.toFixed(2)}</h2>
+            <p className="text-white font-semibold">Total Assets: ${totalAssets.toFixed(2)}</p>
+            <p className="text-white font-semibold">Total Debts: ${totalDebts.toFixed(2)}</p>
+          </div>
+      
+          {/* Set Net Worth Goal */}
+          <div className="set-goal mb-6 p-6 rounded-lg shadow-md text-center w-full sm:w-full md:w-full lg:w-1/3 lg:mx-auto" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(10px)' }}>
+            <h3 className="text-lg font-bold mb-3 text-white">Set Your Net Worth Goal</h3>
+            <form onSubmit={handleSetGoal}>
+              <input
+                type="number"
+                placeholder="Enter your net worth goal"
+                value={goal || ''}
+                onChange={(e) => setGoal(parseFloat(e.target.value))}
+                className="p-3 mb-4 w-full border rounded text-black bg-white border-gray-500 font-semibold"
+              />
+              <button type="submit" className="bg-light-blue-500 text-white font-bold p-3 rounded w-full hover:bg-blue-700 transition duration-200 ease-in-out">
+                Set Goal
+              </button>
+            </form>
+          </div>
+      
+          {/* Progress Bar */}
+          <div className="progress-bar-container p-6 rounded-lg shadow-md text-center w-full sm:w-full md:w-full lg:w-1/3 lg:mx-auto" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(10px)' }}>
+            <h3 className="text-lg font-bold mb-3 text-white">Progress Towards Your Goal</h3>
+            <div className="progress-bar w-full bg-gray-300 rounded h-6">
+              <div
+                className="h-6 rounded text-white flex items-center justify-center"
+                style={{
+                  width: `${progress}%`,
+                  background: `linear-gradient(90deg, red 0%, yellow 50%, green 100%)`,
+                }}
+              >
+                {progress > 0 ? `${progress}%` : '0%'}
+              </div>
             </div>
-
-            {/* Set Net Worth Goal */}
-            <div className="set-goal mb-6 p-4 bg-white rounded-lg shadow-md text-center">
-                <h3 className="text-lg font-semibold mb-3">Set Your Net Worth Goal</h3>
-                <form onSubmit={handleSetGoal}>
-                    <input
-                        type="number"
-                        placeholder="Enter your net worth goal"
-                        value={goal || ''}
-                        onChange={(e) => setGoal(parseFloat(e.target.value))}
-                        className="p-2 border w-full mb-4 rounded"
-                    />
-                    <button type="submit" className="bg-green-500 text-white p-2 rounded w-full">
-                        Set Goal
-                    </button>
-                </form>
-            </div>
-
-            {/* Progress Bar */}
-            <div className="progress-bar-container p-4 bg-white rounded-lg shadow-md text-center">
-                <h3 className="text-lg font-semibold mb-3">Progress Towards Your Goal</h3>
-                <div className="progress-bar w-full bg-gray-300 rounded h-6">
-                    <div
-                        className="bg-green-500 h-6 rounded text-white flex items-center justify-center"
-                        style={{ width: `${progress}%` }}
-                    >
-                        {progress > 0 ? `${progress}%` : '0%'}
-                    </div>
-                </div>
-                {goal > 0 && (
-                    <p className="mt-2">
-                        You have achieved {progress}% of your goal. Keep going!
-                    </p>
-                )}
-            </div>
+            {goal > 0 && (
+              <p className="mt-2 text-white">
+                You have achieved {progress}% of your goal. Keep going!
+              </p>
+            )}
+          </div>
         </div>
-    );
+      );
 };
 
 export default Dashboard;
