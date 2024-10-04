@@ -5,15 +5,15 @@ import { addAsset, fetchAssets, deleteAsset } from '../services/assetService';
 import { addDebt, fetchDebts, deleteDebt } from '../services/debtService'; // Import deleteDebt function
 
 const PortfolioManagement = () => {
-  const [portfolios, setPortfolios] = useState([]);
+  const [portfolios, setPortfolios] = useState([]); // Initialize portfolios as an empty array
   const [newPortfolioName, setNewPortfolioName] = useState('');
   const [selectedPortfolio, setSelectedPortfolio] = useState(null);
   const [expandedPortfolioId, setExpandedPortfolioId] = useState(null); // Track the expanded portfolio
   const [isPortfolioSectionExpanded, setIsPortfolioSectionExpanded] = useState(true); // Track if the "Your Portfolios" section is expanded
-  const [userId, setUserId] = useState(null);
-  const [assets, setAssets] = useState([]);
-  const [debts, setDebts] = useState([]); // Track debts for the user
-  const [expandedDebt, setExpandedDebt] = useState(false); // Track if debt section is expanded
+  const [userId, setUserId] = useState(null); // userId should be null initially
+  const [assets, setAssets] = useState([]); // Initialize assets as an empty array
+  const [debts, setDebts] = useState([]); // Initialize debts as an empty array
+  const [expandedDebt, setExpandedDebt] = useState(false);
 
   // State for manual asset entry
   const [manualAssetName, setManualAssetName] = useState('');
@@ -64,29 +64,30 @@ const PortfolioManagement = () => {
   const loadPortfolios = async (userId) => {
     try {
       const data = await fetchPortfoliosByUserId(userId);
-      setPortfolios(data);
+      setPortfolios(Array.isArray(data) ? data : []); // Ensure portfolios is an array
     } catch (error) {
       console.error('Error fetching portfolios:', error);
+      setPortfolios([]); // Fallback to empty array on error
     }
   };
 
   const loadAssets = async (userId) => {
     try {
       const data = await fetchAssets(userId);
-      setAssets(Array.isArray(data) ? data : []);
+      setAssets(Array.isArray(data) ? data : []); // Ensure assets is an array
     } catch (error) {
       console.error('Error fetching assets:', error);
-      setAssets([]);
+      setAssets([]); // Fallback to empty array on error
     }
   };
 
   const loadDebts = async (userId) => {
     try {
       const data = await fetchDebts(userId);
-      setDebts(Array.isArray(data) ? data : []);
+      setDebts(Array.isArray(data) ? data : []); // Ensure debts is an array
     } catch (error) {
       console.error('Error fetching debts:', error);
-      setDebts([]);
+      setDebts([]); // Fallback to empty array on error
     }
   };
 
@@ -226,10 +227,21 @@ const PortfolioManagement = () => {
     }
   };
 
+  // Update totalPortfolioValue calculation to include error handling for empty states
   const totalPortfolioValue = portfolios.reduce((total, portfolio) => {
-    const portfolioAssets = assets.filter((asset) => asset.portfolioId === portfolio.id);
-    return total + portfolioAssets.reduce((sum, asset) => sum + asset.value, 0);
+    const portfolioAssets = Array.isArray(assets) ? assets.filter((asset) => asset.portfolioId === portfolio.id) : [];
+    const portfolioDebts = Array.isArray(debts) ? debts.filter((debt) => debt.portfolioId === portfolio.id) : [];
+
+    // Sum of asset values
+    const totalAssetValue = portfolioAssets.reduce((sum, asset) => sum + asset.value, 0);
+
+    // Sum of debt values
+    const totalDebtValue = portfolioDebts.reduce((sum, debt) => sum + debt.amount, 0);
+
+    // Subtract debts from assets for each portfolio
+    return total + totalAssetValue - totalDebtValue;
   }, 0);
+
 
   return (
     <div className="mx-auto p-4 text-primary-text font-roboto text-sm w-full min-h-screen" style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)' }}>
