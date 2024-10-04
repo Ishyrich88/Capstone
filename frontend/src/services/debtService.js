@@ -35,5 +35,17 @@ export const getDebtsByUserId = async (userId) => {
     }
 };
 
+// Delete a debt by debt ID
+export const deleteDebt = async (debtId) => {
+    try {
+        const response = await axios.delete(`${BASE_URL}/debts/${debtId}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error deleting debt with ID ${debtId}:`, error);
+        throw error;
+    }
+};
+
+
 
 
